@@ -5,7 +5,7 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "csc193.rccarclient"
+        applicationId "ph.edu.msuiit.rccarclient"
         minSdkVersion 15
         targetSdkVersion 21
         versionCode 1

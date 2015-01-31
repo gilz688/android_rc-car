@@ -1,5 +1,6 @@
-package csc193.rccarclient;
+package ph.edu.msuiit.rccarclient;
 
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,7 +14,7 @@ import android.view.ViewGroup;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 
-public class ClientActivity extends ActionBarActivity {
+public class ClientActivity extends ActionBarActivity implements DeviceFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +25,7 @@ public class ClientActivity extends ActionBarActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, new DeviceFragment())
                     .commit();
         }
     }
@@ -54,11 +55,19 @@ public class ClientActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_refresh) {
+            ServerDiscovery discovery;
+            discovery = new ServerDiscovery((WifiManager) this.getSystemService(WIFI_SERVICE));
+            discovery.start();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction(String id) {
+
     }
 
     /**
