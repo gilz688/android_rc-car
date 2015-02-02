@@ -1,20 +1,15 @@
 package ph.edu.msuiit.rccarclient;
 
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 
-public class ClientActivity extends ActionBarActivity implements DeviceFragment.OnFragmentInteractionListener{
+public class ClientActivity extends ActionBarActivity implements DiscoveryFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +20,7 @@ public class ClientActivity extends ActionBarActivity implements DeviceFragment.
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new DeviceFragment())
+                    .add(R.id.container, new DiscoveryFragment())
                     .commit();
         }
     }
@@ -56,9 +51,9 @@ public class ClientActivity extends ActionBarActivity implements DeviceFragment.
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            ServerDiscovery discovery;
-            discovery = new ServerDiscovery((WifiManager) this.getSystemService(WIFI_SERVICE));
-            discovery.start();
+            DiscoveryClient discovery;
+            //discovery = new ServerDiscovery((WifiManager) this.getSystemService(WIFI_SERVICE));
+            //discovery.start();
             return true;
         }
 
@@ -68,21 +63,5 @@ public class ClientActivity extends ActionBarActivity implements DeviceFragment.
     @Override
     public void onFragmentInteraction(String id) {
 
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_client, container, false);
-            return rootView;
-        }
     }
 }
