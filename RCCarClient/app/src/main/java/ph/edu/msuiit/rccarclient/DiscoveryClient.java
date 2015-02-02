@@ -15,10 +15,10 @@ import java.net.SocketTimeoutException;
 
 public class DiscoveryClient extends Thread {
     private static final String TAG = "Discovery";
-    public static final String ACTION_DISCOVERY_SERVER_FOUND = "discovery_server_found";
-    public static final String ACTION_DISCOVERY_CLIENT_STARTED = "discovery_client_started";
-    public static final String ACTION_DISCOVERY_CLIENT_ENDED = "discovery_client_ended";
-    public static final String ACTION_DISCOVERY_CLIENT_ERROR = "discovery_client_error";
+    public static final String ACTION_DISCOVERY_SERVER_FOUND = "ACTION_DISCOVERY_SERVER_FOUND";
+    public static final String ACTION_DISCOVERY_CLIENT_STARTED = "ACTION_DISCOVERY_CLIENT_STARTED";
+    public static final String ACTION_DISCOVERY_CLIENT_ENDED = "ACTION_DISCOVERY_CLIENT_ENDED";
+    public static final String ACTION_DISCOVERY_CLIENT_ERROR = "ACTION_DISCOVERY_CLIENT_ERROR";
 
     private static final int TIMEOUT_MS = 4000;
     private static final int DISCOVERY_PORT = 19876;
