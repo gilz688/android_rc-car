@@ -1,4 +1,4 @@
-package ph.edu.msuiit.rccarclient.models;
+package ph.edu.msuiit.rccarclient.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ph.edu.msuiit.rccarclient.R;
+import ph.edu.msuiit.rccarclient.models.Device;
 
 public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder>{
     private List<Device> deviceList;
@@ -51,6 +52,10 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         boolean result = deviceList.add(device);
         notifyDataSetChanged();
         return result;
+    }
+
+    public void setEmpty() {
+        deviceList = new ArrayList<>();
     }
 
     public static class DeviceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

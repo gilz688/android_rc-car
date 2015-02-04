@@ -1,4 +1,4 @@
-package ph.edu.msuiit.rccarclient;
+package ph.edu.msuiit.rccarclient.rc;
 
 import java.io.IOException;
 import java.net.InetAddress;

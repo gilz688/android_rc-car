@@ -1,22 +1,27 @@
 package ph.edu.msuiit.rccarclient;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 
-import com.readystatesoftware.systembartint.SystemBarTintManager;
+import ph.edu.msuiit.rccarclient.discovery.DiscoveryFragment;
+import ph.edu.msuiit.rccarclient.discovery.DiscoveryView;
+import ph.edu.msuiit.rccarclient.utils.KitKatTweaks;
 
 
-public class ClientActivity extends ActionBarActivity implements DiscoveryFragment.OnFragmentInteractionListener{
+public class ClientActivity extends ActionBarActivity implements DiscoveryView.OnStatusUpdateListener {
+
+    private static final String TAG = "ClientActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_client);
-
-        enableStatusBarTint();
+        KitKatTweaks.enableStatusBarTint(this);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -25,15 +30,6 @@ public class ClientActivity extends ActionBarActivity implements DiscoveryFragme
         }
     }
 
-    private void enableStatusBarTint(){
-        int version = android.os.Build.VERSION.SDK_INT;
-        if (version == Build.VERSION_CODES.KITKAT) {
-            SystemBarTintManager tintManager = new SystemBarTintManager(this);
-            // enable status bar tint
-            tintManager.setStatusBarTintEnabled(true);
-            tintManager.setTintResource(R.color.primary_color_dark);
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -48,20 +44,20 @@ public class ClientActivity extends ActionBarActivity implements DiscoveryFragme
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_refresh) {
-            DiscoveryClient discovery;
-            //discovery = new ServerDiscovery((WifiManager) this.getSystemService(WIFI_SERVICE));
-            //discovery.start();
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onFragmentInteraction(String id) {
-
+    public void onStatusUpdate(STATUS status) {
+        Log.d(TAG, status.toString());
+        switch (status){
+            case BUSY:
+                setSupportProgressBarIndeterminateVisibility(true);
+                break;
+            case READY:
+            case ERROR:
+                setSupportProgressBarIndeterminateVisibility(false);
+                break;
+        }
     }
 }
