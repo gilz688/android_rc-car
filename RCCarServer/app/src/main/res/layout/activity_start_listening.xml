@@ -22,14 +22,23 @@
         android:id="@+id/ipTextView"
         android:layout_centerHorizontal="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/waiting"
+        android:id="@+id/waitingTextView"
+        android:layout_below="@+id/ipTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp" />
 
     <Button
-        android:text="@string/start_btn"
+        android:text="@string/cancel_btn"
         android:id="@+id/startBtn"
         style="@style/btn_style"
-        android:layout_marginTop="70dp"
-        android:onClick="startListening"
-        android:layout_below="@+id/ipTextView"
+        android:layout_marginTop="30dp"
+        android:onClick="cancelListening"
+        android:layout_below="@+id/waitingTextView"
         android:layout_centerHorizontal="true" />
 
 
