@@ -70,7 +70,7 @@ public class DiscoveryServer extends Thread {
                 DatagramPacket sendPacket = new DatagramPacket(data, data.length, receivePacket.getAddress(), receivePacket.getPort());
                 socket.send(sendPacket);
 
-                Log.v(TAG, "Packet sent to: " + sendPacket.getAddress().getHostAddress());
+                Log.d(TAG, "Packet sent to: " + sendPacket.getAddress().getHostAddress());
             }
         }
     }

@@ -9,16 +9,15 @@ import android.widget.TextView;
 import android.view.View;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiInfo;
+import android.util.Log;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import android.util.Log;
-//import java.util.Set;
+import java.util.Set;
 
 import ph.edu.msuiit.rccarserver.utils.KitKatTweaks;
 
 public class ServerActivity extends ActionBarActivity {
-    DiscoveryServer dThread;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,9 +54,9 @@ public class ServerActivity extends ActionBarActivity {
     }
 
     public void startListening(View view) throws UnknownHostException {
-        dThread = new DiscoveryServer("DiscoveryServer");
+        DiscoveryServer dThread; dThread = new DiscoveryServer("DiscoveryServer");
         dThread.start();
-        setContentView(R.layout.activity_start_listening);
+        KitKatTweaks.enableStatusBarTint(this);
         displayConnectionDetails();
     }
 
@@ -65,7 +64,7 @@ public class ServerActivity extends ActionBarActivity {
         setContentView(R.layout.activity_server);
         displayConnectionDetails();
 
-        /*Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
 
         for (int i = 0; i < threadArray.length; i++) {
@@ -73,8 +72,7 @@ public class ServerActivity extends ActionBarActivity {
                 DiscoveryServer dThread =  (DiscoveryServer) threadArray[i];
                 dThread.disconnect();
             }
-        }*/
-        dThread.disconnect();
+        }
     }
 
 
