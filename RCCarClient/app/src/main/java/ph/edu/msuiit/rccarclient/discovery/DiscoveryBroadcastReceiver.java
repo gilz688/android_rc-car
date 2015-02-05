@@ -8,6 +8,8 @@ import android.util.Log;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import ph.edu.msuiit.rccarclient.R;
+
 public class DiscoveryBroadcastReceiver extends BroadcastReceiver {
     private DiscoveryPresenter mPresenter;
 
@@ -39,7 +41,13 @@ public class DiscoveryBroadcastReceiver extends BroadcastReceiver {
                 mPresenter.discoveryEnded();
                 break;
             case DiscoveryService.ACTION_DISCOVERY_CLIENT_ERROR:
-                mPresenter.discoveryError();
+                mPresenter.discoveryError(context.getResources().getString(R.string.error_io_exception));
+                break;
+            case DiscoveryService.ACTION_WIFI_OFF:
+                mPresenter.discoveryError(context.getResources().getString(R.string.error_wifi_off));
+                break;
+            case DiscoveryService.ACTION_DISCOVERY_SERVER_NOT_FOUND:
+                mPresenter.discoveryError(context.getResources().getString(R.string.error_not_found));
                 break;
         }
         Log.d("receiver", "Got message: " + intent.getAction());

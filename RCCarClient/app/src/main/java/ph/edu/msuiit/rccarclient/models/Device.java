@@ -4,7 +4,6 @@ import java.net.InetAddress;
 
 public class Device {
     private String name;
-
     private InetAddress ipAddress;
 
     public Device(String name, InetAddress ipAddress) {

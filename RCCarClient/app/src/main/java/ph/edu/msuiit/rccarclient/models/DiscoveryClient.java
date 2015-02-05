@@ -34,7 +34,7 @@ public class DiscoveryClient{
      * @throws java.io.IOException
      */
     public void startDiscovery() throws IOException{
-        DatagramSocket socket = new DatagramSocket(DEFAULT_PORT);
+        DatagramSocket socket = new DatagramSocket(discoveryPort);
         socket.setBroadcast(true);
         socket.setSoTimeout(timeout);
         sendDiscoveryRequest(socket);
@@ -76,7 +76,7 @@ public class DiscoveryClient{
     public void sendDiscoveryRequest(DatagramSocket socket) throws IOException {
         String data = "discover";
         DatagramPacket packet = new DatagramPacket(data.getBytes(), data.length(),
-                broadcastAddress, DEFAULT_PORT);
+                broadcastAddress, discoveryPort);
         socket.send(packet);
     }
 

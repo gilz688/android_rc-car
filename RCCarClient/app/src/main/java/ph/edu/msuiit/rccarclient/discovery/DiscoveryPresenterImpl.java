@@ -3,18 +3,22 @@ package ph.edu.msuiit.rccarclient.discovery;
 import java.net.InetAddress;
 
 import ph.edu.msuiit.rccarclient.models.Device;
-import ph.edu.msuiit.rccarclient.models.DiscoveryClient;
 
 public class DiscoveryPresenterImpl implements DiscoveryPresenter{
     private DiscoveryView mView;
-    private DiscoveryClient mClient;
 
     public DiscoveryPresenterImpl(DiscoveryView view){
         mView = view;
     }
 
-    public void onRefreshButtonClicked(){
+    public void onRefreshClicked(){
+        mView.hideError();
         mView.refreshDeviceList();
+    }
+
+    @Override
+    public void discoveryStarted() {
+        mView.showProgress();
     }
 
     @Override
@@ -24,13 +28,8 @@ public class DiscoveryPresenterImpl implements DiscoveryPresenter{
     }
 
     @Override
-    public void discoveryStarted() {
-        mView.showProgress();
-    }
-
-    @Override
-    public void discoveryError() {
-        mView.hideProgress();
+    public void discoveryError(String message) {
+        mView.showError(message);
     }
 
     @Override
@@ -46,6 +45,11 @@ public class DiscoveryPresenterImpl implements DiscoveryPresenter{
     @Override
     public void onEnd(){
 
+    }
+
+    @Override
+    public void onClickWifiSettings() {
+        mView.showWifiSettings();
     }
 
 }

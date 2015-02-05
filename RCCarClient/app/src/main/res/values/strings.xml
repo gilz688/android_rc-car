@@ -3,6 +3,11 @@
 
     <string name="app_name">RC Car Client</string>
     <string name="action_refresh">Refresh</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="btn_wifi_settings">Wi-Fi Settings</string>
+
+    <string name="wifi_off">Wi-Fi off</string>
+    <string name="error_not_found">RC Car server needs to be connected to the same Wi-Fi network.</string>
+    <string name="error_wifi_off">Wi-Fi needs to be on to connect to RC Car Server.</string>
+    <string name="error_io_exception">An IOException has occurred while performing discovery.</string>
 
 </resources>

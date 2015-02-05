@@ -2,11 +2,13 @@ package ph.edu.msuiit.rccarclient;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
+import android.view.View;
 
+import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import ph.edu.msuiit.rccarclient.discovery.DiscoveryFragment;
 import ph.edu.msuiit.rccarclient.discovery.DiscoveryView;
 import ph.edu.msuiit.rccarclient.utils.KitKatTweaks;
@@ -15,13 +17,19 @@ import ph.edu.msuiit.rccarclient.utils.KitKatTweaks;
 public class ClientActivity extends ActionBarActivity implements DiscoveryView.OnStatusUpdateListener {
 
     private static final String TAG = "ClientActivity";
+    private SmoothProgressBar spbToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_client);
         KitKatTweaks.enableStatusBarTint(this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        spbToolbar = (SmoothProgressBar) findViewById(R.id.spbToolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+        }
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -30,12 +38,10 @@ public class ClientActivity extends ActionBarActivity implements DiscoveryView.O
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_client, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -52,11 +58,13 @@ public class ClientActivity extends ActionBarActivity implements DiscoveryView.O
         Log.d(TAG, status.toString());
         switch (status){
             case BUSY:
-                setSupportProgressBarIndeterminateVisibility(true);
+                spbToolbar.setVisibility(View.VISIBLE);
                 break;
             case READY:
+                spbToolbar.setVisibility(View.GONE);
+                break;
             case ERROR:
-                setSupportProgressBarIndeterminateVisibility(false);
+                spbToolbar.setVisibility(View.GONE);
                 break;
         }
     }

@@ -19,11 +19,16 @@ public class DiscoveryService extends IntentService{
 
     public static final String INTENT_START_DISCOVERY = "INTENT_START_DISCOVERY";
 
-    public static final String ACTION_DISCOVERY_SERVER_FOUND = "ACTION_DISCOVERY_SERVER_FOUND";
-    public static final String ACTION_DISCOVERY_CLIENT_STARTED = "ACTION_DISCOVERY_CLIENT_STARTED";
-    public static final String ACTION_DISCOVERY_CLIENT_ENDED = "ACTION_DISCOVERY_CLIENT_ENDED";
-    public static final String ACTION_DISCOVERY_CLIENT_ERROR = "ACTION_DISCOVERY_CLIENT_ERROR";
+    public static final String ACTION_DISCOVERY_SERVER_FOUND = "DISCOVERY_SERVER_FOUND";
+    public static final String ACTION_DISCOVERY_CLIENT_STARTED = "DISCOVERY_CLIENT_STARTED";
+    public static final String ACTION_DISCOVERY_CLIENT_ENDED = "DISCOVERY_CLIENT_ENDED";
+    public static final String ACTION_DISCOVERY_CLIENT_ERROR = "DISCOVERY_CLIENT_ERROR";
+    public  static final String ACTION_DISCOVERY_SERVER_NOT_FOUND = "DISCOVERY_SERVER_NOT_FOUND";
+    public static final String ACTION_WIFI_OFF = "WIFI_OFF";
+
     private static final String TAG = "DiscoveryService";
+
+    private volatile boolean serverFound;
 
     public DiscoveryService() {
         super("DiscoveryService");
@@ -36,23 +41,33 @@ public class DiscoveryService extends IntentService{
         String action = intent.getAction();
         switch(action){
             case INTENT_START_DISCOVERY:
-                sendMessage(ACTION_DISCOVERY_CLIENT_STARTED);
-                try {
-                    DiscoveryClient client = new DiscoveryClient(getBroadcastAddress());
-                    client.setTimeout(timeout);
-                    client.setDiscoveryPort(discoveryPort);
-                    client.setOnServerFoundListener(new DiscoveryClient.OnServerFoundListener() {
-                        @Override
-                        public void onServerFound(String serverName, InetAddress serverAddress, int serverPort) {
-                            sendServerFoundMessage(serverName, serverAddress, serverPort);
-                        }
-                    });
-                    client.startDiscovery();
-                } catch (IOException e) {
-                    sendMessage(ACTION_DISCOVERY_CLIENT_ERROR);
-                    Log.e(TAG, "Could not send discovery request", e);
-                } finally {
-                    sendMessage(ACTION_DISCOVERY_CLIENT_ENDED);
+                serverFound = false;
+                WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                if(wifiManager.isWifiEnabled()) {
+                    try {
+                        sendMessage(ACTION_DISCOVERY_CLIENT_STARTED);
+                        DiscoveryClient client = new DiscoveryClient(getBroadcastAddress(wifiManager));
+                        client.setTimeout(timeout);
+                        client.setDiscoveryPort(discoveryPort);
+                        client.setOnServerFoundListener(new DiscoveryClient.OnServerFoundListener() {
+                            @Override
+                            public void onServerFound(String serverName, InetAddress serverAddress, int serverPort) {
+                                serverFound = true;
+                                sendServerFoundMessage(serverName, serverAddress, serverPort);
+                            }
+                        });
+                        client.startDiscovery();
+                        if (!serverFound)
+                            sendMessage(ACTION_DISCOVERY_SERVER_NOT_FOUND);
+                    } catch (IOException e) {
+                        sendMessage(ACTION_DISCOVERY_CLIENT_ERROR);
+                        Log.e(TAG,e.getMessage());
+                    } finally {
+                        sendMessage(ACTION_DISCOVERY_CLIENT_ENDED);
+                    }
+                }
+                else{
+                    sendMessage(ACTION_WIFI_OFF);
                 }
                 break;
             default:
@@ -63,8 +78,8 @@ public class DiscoveryService extends IntentService{
      * Calculate the broadcast IP we need to send the packet along. If we send it
      * to 255.255.255.255, it never gets sent because some routers will block it by default.
      */
-    private InetAddress getBroadcastAddress() throws IOException {
-        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+    private InetAddress getBroadcastAddress(WifiManager wifiManager) throws IOException {
+
         DhcpInfo dhcp = wifiManager.getDhcpInfo();
         if (dhcp == null) {
             Log.d(TAG, "Could not get dhcp info");

@@ -58,6 +58,10 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         deviceList = new ArrayList<>();
     }
 
+    public List<Device> getItems() {
+        return deviceList;
+    }
+
     public static class DeviceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         protected TextView tvDeviceName;
         protected TextView tvIpAddress;
@@ -73,6 +77,13 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         @Override
         public void onClick(View v) {
 
+        }
+
+        public static class EmptyViewHolder extends RecyclerView.ViewHolder{
+
+            public EmptyViewHolder(View itemView) {
+                super(itemView);
+            }
         }
     }
 }

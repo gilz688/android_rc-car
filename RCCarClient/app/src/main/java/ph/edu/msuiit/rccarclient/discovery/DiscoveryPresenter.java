@@ -4,11 +4,11 @@ import java.net.InetAddress;
 
 public interface DiscoveryPresenter {
 
-    public void onRefreshButtonClicked();
+    public void onRefreshClicked();
 
     public void discoveryStarted();
 
-    public void discoveryError();
+    void discoveryError(String message);
 
     public void discoveryEnded();
 
@@ -17,4 +17,6 @@ public interface DiscoveryPresenter {
     public void onStart();
 
     public void onEnd();
+
+    public void onClickWifiSettings();
 }

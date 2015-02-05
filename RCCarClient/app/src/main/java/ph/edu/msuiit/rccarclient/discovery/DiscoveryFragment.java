@@ -5,15 +5,21 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import ph.edu.msuiit.rccarclient.R;
 import ph.edu.msuiit.rccarclient.adapters.DeviceAdapter;
@@ -31,9 +37,12 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView{
     private RecyclerView rvDevice;
     private DeviceAdapter mAdapter;
     private DiscoveryPresenter mPresenter;
+    private View errorView;
+    private TextView tvErrorMessage;
 
     // handler for received Intents for the "server_discovery" event
     BroadcastReceiver mMessageReceiver;
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -49,9 +58,17 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView{
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_device,
                 null);
+        errorView = root.findViewById(R.id.llError);
+        tvErrorMessage = (TextView) root.findViewById(R.id.tvErrorMessage);
 
         rvDevice = (RecyclerView) root.findViewById(R.id.rvDevice);
         rvDevice.setHasFixedSize(true);
@@ -63,9 +80,36 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView{
 
         mPresenter = new DiscoveryPresenterImpl(this);
         mMessageReceiver = new DiscoveryBroadcastReceiver(mPresenter);
-        startDiscovery();
+
+        root.findViewById(R.id.btnWifiSettings).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.onClickWifiSettings();
+            }
+        });
+
+        // restore saved device list
+        if(savedInstanceState != null){
+            String errorMessage = savedInstanceState.getString("errorMessage");
+            tvErrorMessage.setText(errorMessage);
+            boolean isVisible = savedInstanceState.getBoolean("isVisible", false);
+            if(isVisible)
+                errorView.setVisibility(View.VISIBLE);
+            ArrayList<ParcelableDevice> deviceList = savedInstanceState.getParcelableArrayList("devices");
+            for(Device device : deviceList){
+                mAdapter.add(device);
+            }
+        }
+        else {
+            startDiscovery();
+        }
 
         return root;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_client, menu);
     }
 
     @Override
@@ -73,7 +117,7 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView{
         switch (item.getItemId()) {
             case R.id.action_refresh:
                 if(mPresenter != null)
-                    mPresenter.onRefreshButtonClicked();
+                    mPresenter.onRefreshClicked();
                 break;
             default:
         }
@@ -119,6 +163,24 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView{
         startDiscovery();
     }
 
+    @Override
+    public void showError(String message) {
+        rvDevice.setVisibility(View.INVISIBLE);
+        tvErrorMessage.setText(message);
+        errorView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideError() {
+        rvDevice.setVisibility(View.VISIBLE);
+        errorView.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showWifiSettings() {
+        startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+    }
+
     public void startDiscovery(){
         Activity activity = getActivity();
         Intent intent = new Intent(activity, DiscoveryService.class);
@@ -132,6 +194,8 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView{
         filter.addAction(DiscoveryService.ACTION_DISCOVERY_CLIENT_STARTED);
         filter.addAction(DiscoveryService.ACTION_DISCOVERY_CLIENT_ENDED);
         filter.addAction(DiscoveryService.ACTION_DISCOVERY_CLIENT_ERROR);
+        filter.addAction(DiscoveryService.ACTION_DISCOVERY_SERVER_NOT_FOUND);
+        filter.addAction(DiscoveryService.ACTION_WIFI_OFF);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver,
                 filter);
     }
@@ -154,5 +218,17 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView{
         if(mPresenter != null)
             mPresenter.onEnd();
         super.onPause();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        ArrayList<ParcelableDevice> deviceList = new ArrayList<>();
+        for(Device device : mAdapter.getItems()){
+            deviceList.add(new ParcelableDevice(device));
+        }
+        outState.putParcelableArrayList("devices", deviceList);
+        outState.putBoolean("isVisible", errorView.getVisibility() == View.VISIBLE);
+        outState.putString("errorMessage",tvErrorMessage.getText().toString());
     }
 }
