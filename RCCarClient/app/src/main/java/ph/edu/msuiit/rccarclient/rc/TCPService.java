@@ -1,10 +1,14 @@
 package ph.edu.msuiit.rccarclient.rc;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
 
-public class TCPClient extends Thread{
+import java.net.InetAddress;
+
+import ph.edu.msuiit.rccarclient.models.TCPClient;
+
+public class TCPService extends Service {
     private static final String TAG = "TCPClient";
     public static final String ACTION_TCP_CONNECTED = "ACTION_TCP_CONNECTED";
     public static final String ACTION_TCP_DISCONNECTED = "ACTION_TCP_DISCONNECTED";
@@ -13,17 +17,15 @@ public class TCPClient extends Thread{
 
     private int mServerPort;
     private InetAddress mServerAddress;
+    private TCPClient client;
 
-    public TCPClient(InetAddress serverAddress, int serverPort){
+    public TCPService(InetAddress serverAddress, int serverPort){
         mServerAddress = serverAddress;
-        mServerPort = serverPort;;
+        mServerPort = serverPort;
         }
 
-    public void run() {
-        try {
-            Socket socket = new Socket(mServerAddress, mServerPort);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 }

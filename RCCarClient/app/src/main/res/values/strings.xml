@@ -6,8 +6,8 @@
     <string name="btn_wifi_settings">Wi-Fi Settings</string>
 
     <string name="wifi_off">Wi-Fi off</string>
-    <string name="error_not_found">RC Car server needs to be connected to the same Wi-Fi network.</string>
+    <string name="error_not_found">RC Car Server needs to be connected to the same Wi-Fi network.</string>
     <string name="error_wifi_off">Wi-Fi needs to be on to connect to RC Car Server.</string>
-    <string name="error_io_exception">An IOException has occurred while performing discovery.</string>
+    <string name="error_io_exception">Wi-Fi network is unreachable. RC Car Client cannot find the RC Car Server.</string>
 
 </resources>

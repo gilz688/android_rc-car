@@ -32,7 +32,11 @@ import ph.edu.msuiit.rccarclient.models.Device;
  * Activities containing this fragment MUST implement the {@link ph.edu.msuiit.rccarclient.discovery.DiscoveryFragment.OnStatusUpdateListener}
  * interface.
  */
-public class DiscoveryFragment extends Fragment implements DiscoveryView{
+public class DiscoveryFragment extends Fragment implements DiscoveryView, DeviceAdapter.OnItemClickListener{
+    private final String STATE_DEVICE_LIST = "STATE_DEVICE_LIST";
+    private final String STATE_IS_ERROR_VISIBLE = "STATE_IS_ERROR_VISIBLE";
+    private final String STATE_ERROR_MESSAGE = "STATE_ERROR_MESSAGE";
+
     private OnStatusUpdateListener mListener;
     private RecyclerView rvDevice;
     private DeviceAdapter mAdapter;
@@ -42,7 +46,6 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView{
 
     // handler for received Intents for the "server_discovery" event
     BroadcastReceiver mMessageReceiver;
-
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -77,6 +80,7 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView{
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         rvDevice.setLayoutManager(llm);
         rvDevice.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener(this);
 
         mPresenter = new DiscoveryPresenterImpl(this);
         mMessageReceiver = new DiscoveryBroadcastReceiver(mPresenter);
@@ -90,9 +94,9 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView{
 
         // restore saved device list
         if(savedInstanceState != null){
-            String errorMessage = savedInstanceState.getString("errorMessage");
+            String errorMessage = savedInstanceState.getString(STATE_ERROR_MESSAGE);
             tvErrorMessage.setText(errorMessage);
-            boolean isVisible = savedInstanceState.getBoolean("isVisible", false);
+            boolean isVisible = savedInstanceState.getBoolean(STATE_IS_ERROR_VISIBLE, false);
             if(isVisible)
                 errorView.setVisibility(View.VISIBLE);
             ArrayList<ParcelableDevice> deviceList = savedInstanceState.getParcelableArrayList("devices");
@@ -131,7 +135,7 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView{
             mListener = (OnStatusUpdateListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnStatusUpdateListener");
         }
     }
 
@@ -159,7 +163,7 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView{
 
     @Override
     public void refreshDeviceList() {
-        mAdapter.setEmpty();
+        emptyDeviceList();
         startDiscovery();
     }
 
@@ -179,6 +183,16 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView{
     @Override
     public void showWifiSettings() {
         startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+    }
+
+    @Override
+    public void emptyDeviceList() {
+        mAdapter.setEmpty();
+    }
+
+    @Override
+    public void showRCControlsView() {
+
     }
 
     public void startDiscovery(){
@@ -227,8 +241,19 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView{
         for(Device device : mAdapter.getItems()){
             deviceList.add(new ParcelableDevice(device));
         }
-        outState.putParcelableArrayList("devices", deviceList);
-        outState.putBoolean("isVisible", errorView.getVisibility() == View.VISIBLE);
-        outState.putString("errorMessage",tvErrorMessage.getText().toString());
+        outState.putParcelableArrayList(STATE_DEVICE_LIST, deviceList);
+        outState.putBoolean(STATE_IS_ERROR_VISIBLE, errorView.getVisibility() == View.VISIBLE);
+        outState.putString(STATE_ERROR_MESSAGE,tvErrorMessage.getText().toString());
+    }
+
+    @Override
+    public void onItemClick(Device device) {
+        mPresenter.onItemClicked(device);
+    }
+
+    public interface OnStatusUpdateListener{
+        public enum STATUS{ READY, BUSY, ERROR };
+
+        public void onStatusUpdate(STATUS status);
     }
 }

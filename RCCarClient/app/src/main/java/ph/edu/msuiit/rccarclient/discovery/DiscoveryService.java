@@ -44,6 +44,15 @@ public class DiscoveryService extends IntentService{
                 serverFound = false;
                 WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
                 if(wifiManager.isWifiEnabled()) {
+                    while(wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLING){
+                        // wait until wifi is enabled
+                        try {
+                            Thread.sleep(1000);
+                        } catch(InterruptedException e){
+
+                        }
+                    }
+
                     try {
                         sendMessage(ACTION_DISCOVERY_CLIENT_STARTED);
                         DiscoveryClient client = new DiscoveryClient(getBroadcastAddress(wifiManager));

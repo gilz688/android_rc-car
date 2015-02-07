@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
 
 public class DiscoveryClient{
@@ -34,9 +35,11 @@ public class DiscoveryClient{
      * @throws java.io.IOException
      */
     public void startDiscovery() throws IOException{
-        DatagramSocket socket = new DatagramSocket(discoveryPort);
+        DatagramSocket socket = new DatagramSocket(null);
+        socket.setReuseAddress(true);
         socket.setBroadcast(true);
         socket.setSoTimeout(timeout);
+        socket.bind(new InetSocketAddress(discoveryPort));
         sendDiscoveryRequest(socket);
         listenForResponses(socket);
         socket.close();

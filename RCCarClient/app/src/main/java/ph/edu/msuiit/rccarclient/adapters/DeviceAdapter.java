@@ -16,6 +16,7 @@ import ph.edu.msuiit.rccarclient.models.Device;
 
 public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder>{
     private List<Device> deviceList;
+    private OnItemClickListener listener;
 
     public DeviceAdapter(){
         deviceList = new ArrayList<>();
@@ -62,13 +63,22 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         return deviceList;
     }
 
-    public static class DeviceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener = listener;
+    }
+
+    public static interface OnItemClickListener{
+        public void onItemClick(Device device);
+    }
+
+    public class DeviceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         protected TextView tvDeviceName;
         protected TextView tvIpAddress;
         protected ImageView ivDeviceIcon;
 
         public DeviceViewHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
             tvDeviceName = (TextView) itemView.findViewById(R.id.tvDeviceName);
             tvIpAddress = (TextView) itemView.findViewById(R.id.tvIpAddress);
             ivDeviceIcon = (ImageView) itemView.findViewById(R.id.ivDeviceIcon);
@@ -76,13 +86,10 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
 
         @Override
         public void onClick(View v) {
-
-        }
-
-        public static class EmptyViewHolder extends RecyclerView.ViewHolder{
-
-            public EmptyViewHolder(View itemView) {
-                super(itemView);
+            int position = this.getPosition();
+            if(listener != null){
+                Device device = deviceList.get(position);
+                listener.onItemClick(device);
             }
         }
     }

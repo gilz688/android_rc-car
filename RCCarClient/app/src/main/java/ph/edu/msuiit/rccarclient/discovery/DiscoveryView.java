@@ -10,10 +10,6 @@ public interface DiscoveryView {
     public void showError(String message);
     public void hideError();
     public void showWifiSettings();
-
-    public interface OnStatusUpdateListener{
-        public enum STATUS{ READY, BUSY, ERROR };
-
-        public void onStatusUpdate(STATUS status);
-    }
+    public void emptyDeviceList();
+    public void showRCControlsView();
 }

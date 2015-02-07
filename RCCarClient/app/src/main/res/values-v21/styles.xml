@@ -8,7 +8,7 @@
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
 
-        <!--We will be using the toolbar so no need to show ActionBar-->
+        <!-- We will be using the toolbar so no need to show ActionBar -->
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
     </style>

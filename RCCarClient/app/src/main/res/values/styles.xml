@@ -6,6 +6,9 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
+
+        <!-- Use custom material button (not needed in Lollipop -->
+        <item name="android:buttonStyle">@style/MaterialButton</item>
     </style>
 
     <!-- Style for Progress Bar on Toolbar -->
@@ -20,5 +23,11 @@
         <item name="spb_reversed">true</item>
         <item name="spb_colors">@array/progressbar_colors</item>
         <item name="spb_progressiveStart_activated">true</item>
+    </style>
+
+    <!-- Custom material design button -->
+    <style name="MaterialButton" parent="android:style/Widget.Button">
+        <item name="android:textColor">@color/primary_text_default_material_dark</item>
+        <item name="android:background">@drawable/material_button</item>
     </style>
 </resources>

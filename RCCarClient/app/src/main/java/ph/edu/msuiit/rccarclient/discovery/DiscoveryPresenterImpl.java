@@ -52,4 +52,8 @@ public class DiscoveryPresenterImpl implements DiscoveryPresenter{
         mView.showWifiSettings();
     }
 
+    @Override
+    public void onItemClicked(Device device) {
+
+    }
 }
