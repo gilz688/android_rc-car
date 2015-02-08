@@ -1,11 +1,11 @@
-package ph.edu.msuiit.rccarserver;
+package ph.edu.msuiit.rccarserver.discovery;
 
-import java.net.DatagramSocket;
-import java.net.DatagramPacket;
-import java.io.IOException;
-
-import android.util.Log;
 import android.os.Build;
+import android.util.Log;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 
 public class DiscoveryServer extends Thread {
 

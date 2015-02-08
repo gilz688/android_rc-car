@@ -1,20 +1,20 @@
 package ph.edu.msuiit.rccarserver;
 
-import android.support.v7.app.ActionBarActivity;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import android.widget.TextView;
 import android.view.View;
-import android.net.wifi.WifiManager;
-import android.net.wifi.WifiInfo;
-import android.util.Log;
+import android.widget.TextView;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Set;
 
+import ph.edu.msuiit.rccarserver.discovery.DiscoveryServer;
 import ph.edu.msuiit.rccarserver.utils.KitKatTweaks;
 
 public class ServerActivity extends ActionBarActivity {
@@ -53,7 +53,8 @@ public class ServerActivity extends ActionBarActivity {
     }
 
     public void startListening(View view) throws UnknownHostException {
-        DiscoveryServer dThread; dThread = new DiscoveryServer("DiscoveryServer");
+        DiscoveryServer dThread;
+        dThread = new DiscoveryServer("DiscoveryServer");
         dThread.start();
         setContentView(R.layout.activity_start_listening);
         displayConnectionDetails();
