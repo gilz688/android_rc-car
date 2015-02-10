@@ -1,4 +1,4 @@
-package csc193.rccarclient;
+package ph.edu.msuiit.rccarclient;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
