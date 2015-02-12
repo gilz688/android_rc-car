@@ -23,7 +23,6 @@ public class DiscoveryServer extends Thread {
     @Override
     public void run() {
         try {
-
             socket = new DatagramSocket(DISCOVERY_PORT);
             listenForRequests(DISCOVERY_MESSAGE);
 

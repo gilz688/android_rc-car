@@ -4,16 +4,30 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-
-import ph.edu.msuiit.rccarserver.models.TCPServer;
+import android.util.Log;
 
 public class TCPService extends Service {
+    private static final String TAG = "TCPService";
     private final IBinder mBinder = new TCPServiceBinder();
     private TCPServer mServer;
+    private TCPServer.TCPServerListener mListener;
 
     @Override
     public void onCreate(){
+        super.onCreate();
+        Log.d(TAG,"TCPService onCreate()");
+        mListener = new TCPDataReceiver();
         mServer = new TCPServer();
+        mServer.setTCPServerListener(mListener);
+        mServer.startServer();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG,"TCPService onDestroy()");
+        if(mServer != null)
+            mServer.stopServer();
     }
 
     @Override
@@ -27,7 +41,7 @@ public class TCPService extends Service {
     }
 
     public class TCPServiceBinder extends Binder {
-        TCPService getService() {
+        public TCPService getService() {
             return TCPService.this;
         }
     }
