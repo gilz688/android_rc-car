@@ -1,4 +1,4 @@
-package ph.edu.msuiit.rccarserver.models;
+package ph.edu.msuiit.rccarserver.tcp;
 
 import android.util.Log;
 
@@ -13,7 +13,8 @@ import java.net.Socket;
  */
 public class TCPServerTask implements Runnable{
     private static final String TAG = "TCPServerTask";
-    Socket mSocket;
+    private Socket mSocket;
+    private TCPServer.TCPServerListener mListener;
 
     public TCPServerTask(Socket connectionSocket) {
         mSocket = connectionSocket;
@@ -28,26 +29,32 @@ public class TCPServerTask implements Runnable{
             socketInput = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
             socketOutput = new DataOutputStream(mSocket.getOutputStream());
             startListening(socketInput, socketOutput);
-            mSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            assert socketInput != null;
-            assert socketOutput != null;
             try {
-                socketInput.close();
-                socketOutput.close();
+                if(socketInput != null)
+                    socketInput.close();
+                if(socketOutput != null)
+                    socketOutput.close();
+                if(mSocket != null)
+                    mSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            Log.d(TAG, "Client with IP " + mSocket.getInetAddress().getHostAddress() + " has disconnected.");
         }
     }
 
     private void startListening(BufferedReader in, DataOutputStream out) throws IOException {
-        while(mSocket.isConnected()){
-            while(!in.ready()){
-
-            }
+        String line;
+        while((line = in.readLine()) != null){
+            mListener.onDataReceive(line);
         }
     }
+
+    public synchronized void setTCPServerListener(TCPServer.TCPServerListener listener){
+        mListener = listener;
+    }
+
 }

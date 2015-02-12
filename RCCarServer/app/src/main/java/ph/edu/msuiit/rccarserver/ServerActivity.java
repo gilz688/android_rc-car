@@ -1,8 +1,13 @@
 package ph.edu.msuiit.rccarserver;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -15,9 +20,14 @@ import java.net.UnknownHostException;
 import java.util.Set;
 
 import ph.edu.msuiit.rccarserver.discovery.DiscoveryServer;
+import ph.edu.msuiit.rccarserver.tcp.TCPService;
 import ph.edu.msuiit.rccarserver.utils.KitKatTweaks;
 
 public class ServerActivity extends ActionBarActivity {
+    private boolean mBound;
+    private TCPService mService;
+    public static final String TAG = "ServerActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +66,11 @@ public class ServerActivity extends ActionBarActivity {
         DiscoveryServer dThread;
         dThread = new DiscoveryServer("DiscoveryServer");
         dThread.start();
+
+        // Start and Bind to TCPServer
+        Intent intent = new Intent(this, TCPService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
         setContentView(R.layout.activity_start_listening);
         displayConnectionDetails();
     }
@@ -72,6 +87,11 @@ public class ServerActivity extends ActionBarActivity {
                 DiscoveryServer dThread =  (DiscoveryServer) threadArray[i];
                 dThread.disconnect();
             }
+        }
+
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
         }
     }
 
@@ -109,4 +129,34 @@ public class ServerActivity extends ActionBarActivity {
         SSIDTextView.setText("Wi-Fi Connection: " +SSID);
         ipTextView.setText("IP Address: " +IP);
     }
+
+    @Override
+    protected void onStop() {
+        Log.d(TAG,"onStop()");
+        // Unbind from the service
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
+        super.onStop();
+    }
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            TCPService.TCPServiceBinder binder = (TCPService.TCPServiceBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mService = null;
+            mBound = false;
+        }
+    };
 }
