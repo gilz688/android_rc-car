@@ -19,12 +19,12 @@ public class ParcelableDevice extends Device implements Parcelable{
         }
     };
 
-    public ParcelableDevice(String name, InetAddress address) {
-        super(name, address);
+    public ParcelableDevice(String name, InetAddress address, int port) {
+        super(name, address, port);
     }
 
     public ParcelableDevice(Device device) {
-        super(device.getName(),device.getIpAddress());
+        super(device.getName(),device.getIpAddress(), device.getPort());
     }
 
     private ParcelableDevice(Parcel in) {
@@ -40,6 +40,8 @@ public class ParcelableDevice extends Device implements Parcelable{
         } catch (UnknownHostException e) {
 
         }
+        int port = in.readInt();
+        setPort(port);
     }
 
     @Override
@@ -51,5 +53,6 @@ public class ParcelableDevice extends Device implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(getName());
         dest.writeByteArray(getIpAddress().getAddress());
+        dest.writeInt(getPort());
     }
 }

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import ph.edu.msuiit.rccarclient.R;
 import ph.edu.msuiit.rccarclient.adapters.DeviceAdapter;
 import ph.edu.msuiit.rccarclient.models.Device;
+import ph.edu.msuiit.rccarclient.tcp.TCPActivity;
 
 /**
  * A fragment representing a list of RC Car Servers.
@@ -249,10 +250,17 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView, Device
     @Override
     public void onItemClick(Device device) {
         mPresenter.onItemClicked(device);
-    }
+        Activity activity = getActivity();
+        Intent intent = new Intent(activity, TCPActivity.class);
+        intent.putExtra("device", new ParcelableDevice(device));
+        startActivity(intent);
 
+        //Bundle bundle = activity.getIntent().getExtras();
+        //bundle.putParcelable("device", new ParcelableDevice(device));
+        //intent.putExtras(bundle);
+    }
     public interface OnStatusUpdateListener{
-        public enum STATUS{ READY, BUSY, ERROR };
+        public enum STATUS{ READY, BUSY, ERROR }
 
         public void onStatusUpdate(STATUS status);
     }
