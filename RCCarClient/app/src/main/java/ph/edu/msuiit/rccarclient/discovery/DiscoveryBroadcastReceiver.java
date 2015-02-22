@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import ph.edu.msuiit.rccarclient.R;
+import ph.edu.msuiit.rccarclient.discovery.proto.DiscoveryPresenter;
 
 public class DiscoveryBroadcastReceiver extends BroadcastReceiver {
     private DiscoveryPresenter mPresenter;

@@ -1,4 +1,4 @@
-package ph.edu.msuiit.rccarclient.discovery;
+package ph.edu.msuiit.rccarclient.discovery.proto;
 
 import java.net.InetAddress;
 

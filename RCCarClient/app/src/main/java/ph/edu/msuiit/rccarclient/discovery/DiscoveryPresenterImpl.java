@@ -2,23 +2,30 @@ package ph.edu.msuiit.rccarclient.discovery;
 
 import java.net.InetAddress;
 
+import ph.edu.msuiit.rccarclient.discovery.proto.DiscoveryInteractor;
+import ph.edu.msuiit.rccarclient.discovery.proto.DiscoveryPresenter;
+import ph.edu.msuiit.rccarclient.discovery.proto.DiscoveryView;
 import ph.edu.msuiit.rccarclient.models.Device;
 
-public class DiscoveryPresenterImpl implements DiscoveryPresenter{
+public class DiscoveryPresenterImpl implements DiscoveryPresenter {
     private DiscoveryView mView;
+    private DiscoveryInteractor mInteractor;
 
-    public DiscoveryPresenterImpl(DiscoveryView view){
+    public DiscoveryPresenterImpl(DiscoveryView view, DiscoveryInteractor interactor){
         mView = view;
+        mInteractor = interactor;
     }
 
     public void onRefreshClicked(){
         mView.hideError();
-        mView.refreshDeviceList();
+        mView.emptyDeviceList();
+        discoveryStarted();
     }
 
     @Override
     public void discoveryStarted() {
         mView.showProgress();
+        mInteractor.startDiscovery();
     }
 
     @Override
@@ -49,11 +56,11 @@ public class DiscoveryPresenterImpl implements DiscoveryPresenter{
 
     @Override
     public void onClickWifiSettings() {
-        mView.showWifiSettings();
+        mInteractor.openWifiSettings();
     }
 
     @Override
     public void onItemClicked(Device device) {
-
+        mInteractor.connectToServer(device);
     }
 }
