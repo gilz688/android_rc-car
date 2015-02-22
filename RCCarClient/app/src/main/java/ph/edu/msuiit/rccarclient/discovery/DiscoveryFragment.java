@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -101,7 +102,7 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView, Device
             boolean isVisible = savedInstanceState.getBoolean(STATE_IS_ERROR_VISIBLE, false);
             if(isVisible)
                 errorView.setVisibility(View.VISIBLE);
-            ArrayList<ParcelableDevice> deviceList = savedInstanceState.getParcelableArrayList("devices");
+            ArrayList<ParcelableDevice> deviceList = savedInstanceState.getParcelableArrayList(STATE_DEVICE_LIST);
             for(Device device : deviceList){
                 mAdapter.add(device);
             }
@@ -168,6 +169,7 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView, Device
         rvDevice.setVisibility(View.INVISIBLE);
         tvErrorMessage.setText(message);
         errorView.setVisibility(View.VISIBLE);
+        mListener.onStatusUpdate(OnStatusUpdateListener.STATUS.ERROR);
     }
 
     @Override
@@ -200,8 +202,6 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView, Device
     @Override
     public void onResume() {
         registerDiscoveryReceiver();
-        if(mPresenter != null)
-            mPresenter.onStart();
         super.onResume();
     }
 

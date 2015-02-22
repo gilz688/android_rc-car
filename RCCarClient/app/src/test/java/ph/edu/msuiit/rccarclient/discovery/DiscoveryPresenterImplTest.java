@@ -41,13 +41,12 @@ public class DiscoveryPresenterImplTest {
 
         verify(mockView, times(1)).hideError();
         inOrder.verify(mockView, times(1)).emptyDeviceList();
-        inOrder.verify(presenter, times(1)).discoveryStarted();
+        inOrder.verify(mockInteractor, times(1)).startDiscovery();
     }
 
     @Test
     public void testDiscoveryStarted() throws Exception {
         presenter.discoveryStarted();
-
         verify(mockView, times(1)).showProgress();
         verify(mockView, never()).hideProgress();
     }
@@ -81,7 +80,8 @@ public class DiscoveryPresenterImplTest {
 
     @Test
     public void testOnStart() throws Exception {
-
+        presenter.onStart();
+        verify(mockInteractor,times(1)).startDiscovery();
     }
 
     @Test

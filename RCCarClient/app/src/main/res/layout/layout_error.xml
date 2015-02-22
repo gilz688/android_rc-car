@@ -22,6 +22,7 @@
     <Button
         android:id="@+id/btnWifiSettings" android:layout_width="wrap_content"
         android:text="WiFi Settings"
+        android:textSize="@dimen/abc_text_size_medium_material"
         android:layout_marginTop="30dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"

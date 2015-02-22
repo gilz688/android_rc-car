@@ -29,5 +29,6 @@
     <style name="MaterialButton" parent="android:style/Widget.Button">
         <item name="android:textColor">@color/primary_text_default_material_dark</item>
         <item name="android:background">@drawable/material_button</item>
+        <item name="android:padding">15dp</item>
     </style>
 </resources>

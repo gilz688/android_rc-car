@@ -19,13 +19,12 @@ public class DiscoveryPresenterImpl implements DiscoveryPresenter {
     public void onRefreshClicked(){
         mView.hideError();
         mView.emptyDeviceList();
-        discoveryStarted();
+        mInteractor.startDiscovery();
     }
 
     @Override
     public void discoveryStarted() {
         mView.showProgress();
-        mInteractor.startDiscovery();
     }
 
     @Override
@@ -46,7 +45,7 @@ public class DiscoveryPresenterImpl implements DiscoveryPresenter {
 
     @Override
     public void onStart() {
-
+        mInteractor.startDiscovery();
     }
 
     @Override
