@@ -22,7 +22,7 @@ public class TCPServerTask implements Runnable{
 
     @Override
     public void run(){
-        Log.d(TAG, "Client with IP " + mSocket.getInetAddress() + " has connected to server.");
+        // Log.d(TAG, "Client with IP " + mSocket.getInetAddress() + " has connected to server.");
         BufferedReader socketInput = null;
         DataOutputStream socketOutput = null;
         try{
@@ -31,7 +31,7 @@ public class TCPServerTask implements Runnable{
             startListening(socketInput, socketOutput);
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
+        } finally{
             try {
                 if(socketInput != null)
                     socketInput.close();
@@ -42,7 +42,7 @@ public class TCPServerTask implements Runnable{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Log.d(TAG, "Client with IP " + mSocket.getInetAddress().getHostAddress() + " has disconnected.");
+            // Log.d(TAG, "Client with IP " + mSocket.getInetAddress().getHostAddress() + " has disconnected.");
         }
     }
 
