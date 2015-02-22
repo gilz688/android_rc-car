@@ -1,4 +1,4 @@
-package ph.edu.msuiit.rccarserver.discovery;
+package ph.edu.msuiit.rccarserver;
 
 import android.os.Build;
 import android.util.Log;
