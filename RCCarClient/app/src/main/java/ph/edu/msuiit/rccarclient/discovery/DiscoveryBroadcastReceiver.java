@@ -12,6 +12,10 @@ import ph.edu.msuiit.rccarclient.R;
 import ph.edu.msuiit.rccarclient.discovery.proto.DiscoveryPresenter;
 
 public class DiscoveryBroadcastReceiver extends BroadcastReceiver {
+    public static final String EXTRA_SERVER_NAME = "serverName";
+    public static final String EXTRA_SERVER_ADDRESS = "serverAddress";
+    public static final String EXTRA_SERVER_PORT = "serverPort";
+    private static final String TAG = "DiscoveryBroadcastReceiver";
     private DiscoveryPresenter mPresenter;
 
     public DiscoveryBroadcastReceiver(DiscoveryPresenter presenter){
@@ -24,14 +28,14 @@ public class DiscoveryBroadcastReceiver extends BroadcastReceiver {
         switch (action) {
             case DiscoveryService.ACTION_DISCOVERY_SERVER_FOUND:
                 // Extract data included in the Intent
-                String serverName = intent.getStringExtra("serverName");
+                String serverName = intent.getStringExtra(EXTRA_SERVER_NAME);
                 InetAddress serverAddress = null;
                 try {
-                    serverAddress = InetAddress.getByAddress(intent.getByteArrayExtra("serverAddress"));
+                    serverAddress = InetAddress.getByAddress(intent.getByteArrayExtra(EXTRA_SERVER_ADDRESS));
                 } catch (UnknownHostException e) {
-                    e.printStackTrace();
+                    Log.e(TAG,e.getMessage());
                 }
-                int serverPort = intent.getIntExtra("serverPort", -1);
+                int serverPort = intent.getIntExtra(EXTRA_SERVER_PORT, -1);
 
                 mPresenter.onDeviceFound(serverName, serverAddress, serverPort);
                 break;

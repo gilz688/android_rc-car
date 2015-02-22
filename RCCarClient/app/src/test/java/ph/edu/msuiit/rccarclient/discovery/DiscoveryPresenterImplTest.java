@@ -37,7 +37,7 @@ public class DiscoveryPresenterImplTest {
     @Test
     public void testOnRefreshClicked() throws Exception {
         presenter.onRefreshClicked();
-        InOrder inOrder = inOrder(mockView,presenter);
+        InOrder inOrder = inOrder(mockView,mockInteractor);
 
         verify(mockView, times(1)).hideError();
         inOrder.verify(mockView, times(1)).emptyDeviceList();
