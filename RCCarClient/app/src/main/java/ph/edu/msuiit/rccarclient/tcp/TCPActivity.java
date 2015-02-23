@@ -12,7 +12,7 @@ import ph.edu.msuiit.rccarclient.R;
 import ph.edu.msuiit.rccarclient.models.Device;
 import ph.edu.msuiit.rccarclient.utils.KitKatTweaks;
 
-public class TCPActivity extends ActionBarActivity {
+public class TCPActivity extends ActionBarActivity{
     private static final String TAG = "TCPActivity";
 
     @Override
@@ -24,6 +24,10 @@ public class TCPActivity extends ActionBarActivity {
         Log.d(TAG, "TCPActivity Started.");
         registerTCPBroadcastReceiver();
         establishTCPConnection(device.getName(), device.getIpAddress(), device.getPort());
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container, new ControlsFragment())
+                .commit();
     }
 
 

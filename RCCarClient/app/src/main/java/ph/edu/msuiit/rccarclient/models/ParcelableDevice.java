@@ -1,12 +1,10 @@
-package ph.edu.msuiit.rccarclient.discovery;
+package ph.edu.msuiit.rccarclient.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
-import ph.edu.msuiit.rccarclient.models.Device;
 
 public class ParcelableDevice extends Device implements Parcelable{
     public static final Creator<ParcelableDevice> CREATOR = new Creator<ParcelableDevice>() {

@@ -6,6 +6,7 @@ import android.provider.Settings;
 
 import ph.edu.msuiit.rccarclient.discovery.proto.DiscoveryInteractor;
 import ph.edu.msuiit.rccarclient.models.Device;
+import ph.edu.msuiit.rccarclient.models.ParcelableDevice;
 import ph.edu.msuiit.rccarclient.tcp.TCPActivity;
 
 public class DiscoveryInteractorImpl implements DiscoveryInteractor {

@@ -10,4 +10,7 @@
     <string name="error_wifi_off">Wi-Fi needs to be on to connect to RC Car Server.</string>
     <string name="error_io_exception">Wi-Fi network is unreachable. RC Car Client cannot find the RC Car Server.</string>
     <string name="discovery_in_progress">Searching for RC Car Server...</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

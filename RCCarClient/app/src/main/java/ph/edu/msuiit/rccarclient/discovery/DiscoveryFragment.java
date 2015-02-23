@@ -2,10 +2,8 @@ package ph.edu.msuiit.rccarclient.discovery;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -18,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -27,6 +24,7 @@ import ph.edu.msuiit.rccarclient.adapters.DeviceAdapter;
 import ph.edu.msuiit.rccarclient.discovery.proto.DiscoveryPresenter;
 import ph.edu.msuiit.rccarclient.discovery.proto.DiscoveryView;
 import ph.edu.msuiit.rccarclient.models.Device;
+import ph.edu.msuiit.rccarclient.models.ParcelableDevice;
 
 /**
  * A fragment representing a list of RC Car Servers.
