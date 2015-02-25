@@ -5,38 +5,54 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.usb.UsbManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.Set;
 
 import ph.edu.msuiit.rccarserver.R;
 import ph.edu.msuiit.rccarserver.ServerActivity;
+import ph.edu.msuiit.rccarserver.commands.RCCar;
+import tw.com.prolific.driver.pl2303.PL2303Driver;
 
 public class RCCarService extends Service {
     private static final String TAG = "RCCarService";
+    public static final String ACTION_USB_PERMISSION = "ph.edu.msuiit.rccarserver.USB_PERMISSION";
     private final IBinder mBinder = new TCPServiceBinder();
     private TCPServer mServer;
     private TCPServer.TCPServerListener mListener;
     private static final int NOTIFICATION_ID = 19876;
+    private RCCar car;
 
     @Override
     public void onCreate(){
         super.onCreate();
         Log.d(TAG,"TCPService onCreate()");
 
-        DiscoveryServer dThread;
-        dThread = new DiscoveryServer("DiscoveryServer");
-        dThread.start();
-
-        mListener = new TCPDataReceiver();
-        mServer = new TCPServer();
-        mServer.setTCPServerListener(mListener);
-        mServer.startServer();
-
         showNotification();
+
+        PL2303Driver mSerial = new PL2303Driver((UsbManager) getSystemService(Context.USB_SERVICE),
+                this, ACTION_USB_PERMISSION);
+        car = new RCCar(mSerial);
+        try {
+            car.connect();
+
+            DiscoveryServer dThread;
+            dThread = new DiscoveryServer("DiscoveryServer");
+            dThread.start();
+
+            mListener = new TCPDataReceiver(car);
+            mServer = new TCPServer();
+            mServer.setTCPServerListener(mListener);
+            mServer.startServer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void showNotification(){
@@ -79,6 +95,8 @@ public class RCCarService extends Service {
         stopDiscoveryServer();
         if(mServer != null)
             mServer.stopServer();
+        if(car != null)
+            car.disconnect();
     }
 
     @Override

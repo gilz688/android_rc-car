@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import tw.com.prolific.driver.pl2303.PL2303Driver;
 
+
 public class RCCar{
     private static final String TAG = "RCCar";
     public static final String ACTION_USB_PERMISSION = "ph.edu.msuiit.rccarserver.USB_PERMISSION";
@@ -23,7 +24,7 @@ public class RCCar{
             int i=0;
             while(i++ < 5 && mSerial.enumerate()){
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
