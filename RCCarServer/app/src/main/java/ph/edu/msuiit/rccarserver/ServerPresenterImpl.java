@@ -17,15 +17,14 @@ public class ServerPresenterImpl implements ServerPresenter {
 
     @Override
     public void onClickStopListening(){
-        mInteractor.startDiscoveryServer();
-        mInteractor.startTCPServer();
+        mInteractor.disableRCService();
+        mInteractor.stopRCServer();
         mView.hideListeningView();
     }
 
     @Override
     public void onClickStartListening(){
-        mInteractor.stopDiscoveryServer();
-        mInteractor.stopDiscoveryServer();
+        mInteractor.enableRCService();
         mView.showListeningView();
     }
 
@@ -34,11 +33,14 @@ public class ServerPresenterImpl implements ServerPresenter {
     public void onStart(){
         mView.showAddress(mConfiguration.getWifiIpAddress());
         mView.showSSID(mConfiguration.getWifiSSID());
+        if(mInteractor.isRCServiceEnabled())
+            mView.showListeningView();
+        else
+            mView.hideListeningView();
     }
 
     @Override
     public void onStop(){
-        mInteractor.stopDiscoveryServer();
-        mInteractor.stopDiscoveryServer();
+
     }
 }

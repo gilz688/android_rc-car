@@ -1,26 +1,11 @@
 package ph.edu.msuiit.rccarserver;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
-import android.widget.TextView;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Set;
-
-import ph.edu.msuiit.rccarserver.tcp.TCPService;
+import ph.edu.msuiit.rccarserver.R;
 import ph.edu.msuiit.rccarserver.utils.KitKatTweaks;
 
 

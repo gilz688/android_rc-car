@@ -1,11 +1,11 @@
 package ph.edu.msuiit.rccarserver.proto;
 
 public interface ServerInteractor {
-    public void startDiscoveryServer();
+    public void stopRCServer();
 
-    public void stopDiscoveryServer();
+    public void enableRCService();
 
-    public void startTCPServer();
+    public void disableRCService();
 
-    public void stopTCPServer();
+    boolean isRCServiceEnabled();
 }

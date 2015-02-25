@@ -1,4 +1,4 @@
-package ph.edu.msuiit.rccarserver;
+package ph.edu.msuiit.rccarserver.background;
 
 import android.os.Build;
 import android.util.Log;
@@ -30,8 +30,6 @@ public class DiscoveryServer extends Thread {
             Log.e(TAG, e.getMessage());
         }
     }
-
-
 
     /**
      * Receives a broadcast UDP packet from RC Car Client for discovery. Then sends

@@ -7,20 +7,22 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import ph.edu.msuiit.rccarserver.R;
 import ph.edu.msuiit.rccarserver.proto.ServerPresenter;
 import ph.edu.msuiit.rccarserver.proto.ServerView;
-import ph.edu.msuiit.rccarserver.tcp.TCPService;
+import ph.edu.msuiit.rccarserver.background.RCCarService;
 
 public class ServerFragment extends Fragment implements ServerView, View.OnClickListener {
 
     public static final String TAG = "ServerFragment";
-    private TCPService mService;
+    private RCCarService mService;
     private ServerPresenter mPresenter;
     private boolean isListening;
     private boolean mBound;
@@ -31,7 +33,7 @@ public class ServerFragment extends Fragment implements ServerView, View.OnClick
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            TCPService.TCPServiceBinder binder = (TCPService.TCPServiceBinder) service;
+            RCCarService.TCPServiceBinder binder = (RCCarService.TCPServiceBinder) service;
             mService = binder.getService();
             mBound = true;
         }
@@ -62,30 +64,35 @@ public class ServerFragment extends Fragment implements ServerView, View.OnClick
         tvWaiting = (TextView) rootView.findViewById(R.id.tvWaiting);
         tvAddress = (TextView) rootView.findViewById(R.id.tvAddress);
         tvWifiSSID = (TextView) rootView.findViewById(R.id.tvWifiSSID);
-        mPresenter.onStart();
         return rootView;
     }
 
     @Override
     public void onClick(View v) {
         if(isListening)
-            mPresenter.onClickStartListening();
-        else
             mPresenter.onClickStopListening();
+        else
+            mPresenter.onClickStartListening();
+    }
 
-        isListening = !isListening;
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.onStart();
+        String action =  getActivity().getIntent().getAction();
+        Log.d(TAG, "onResume:"+action);
     }
 
     @Override
     public void hideListeningView(){
-        tvWaiting.setVisibility(View.INVISIBLE);
-        btnListening.setText(getResources().getString(R.string.start_btn));
+        isListening = false;
+        btnListening.setText("Enable RC Car Server");
     }
 
     @Override
     public void showListeningView(){
-        tvWaiting.setVisibility(View.VISIBLE);
-        btnListening.setText(getResources().getString(R.string.cancel_btn));
+        isListening = true;
+        btnListening.setText("Disable RC Car Server");
     }
 
     @Override
@@ -97,6 +104,6 @@ public class ServerFragment extends Fragment implements ServerView, View.OnClick
     @Override
     public void showSSID(String ssid){
         String label = this.getResources().getString(R.string.wifi_ssid);
-        tvWifiSSID.setText(label + "\"" + ssid + "\"");
+        tvWifiSSID.setText(label + " " + ssid);
     }
 }

@@ -1,56 +1,62 @@
 package ph.edu.msuiit.rccarserver;
 
-import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 
-import java.util.Set;
-
-import ph.edu.msuiit.rccarserver.tcp.TCPService;
+import ph.edu.msuiit.rccarserver.background.RCCarService;
+import ph.edu.msuiit.rccarserver.background.USBBroadcastReceiver;
 
 public class ServerInteractorImpl implements ph.edu.msuiit.rccarserver.proto.ServerInteractor {
-    private Activity mActivity;
+    private Context mContext;
     private ServiceConnection mConnection;
 
-    public ServerInteractorImpl(Activity activity, ServiceConnection connection){
-        mActivity = activity;
+    public ServerInteractorImpl(Context context, ServiceConnection connection){
+        mContext = context;
         mConnection = connection;
     }
 
     @Override
-    public void startDiscoveryServer(){
-        DiscoveryServer dThread;
-        dThread = new DiscoveryServer("DiscoveryServer");
-        dThread.start();
-
-        // Start and Bind to TCPServer
-        Intent intent = new Intent(mActivity, TCPService.class);
-        mActivity.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    public void stopRCServer(){
+        Context appContext = mContext.getApplicationContext();
+        Intent serviceIntent = new Intent(appContext.getApplicationContext(), RCCarService.class);
+        appContext.getApplicationContext().stopService(serviceIntent);
     }
 
     @Override
-    public void stopDiscoveryServer(){
-        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-        Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
+    public void enableRCService(){
+        ComponentName receiver = new ComponentName(mContext, USBBroadcastReceiver.class);
+        PackageManager pm = mContext.getPackageManager();
 
-        for (int i = 0; i < threadArray.length; i++) {
-            if (threadArray[i].getName().equalsIgnoreCase("DiscoveryServer")) {
-                DiscoveryServer dThread =  (DiscoveryServer) threadArray[i];
-                dThread.disconnect();
-            }
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP);
+    }
+
+    @Override
+    public void disableRCService(){
+        ComponentName receiver = new ComponentName(mContext, USBBroadcastReceiver.class);
+        PackageManager pm = mContext.getPackageManager();
+
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
+    }
+
+    @Override
+    public boolean isRCServiceEnabled(){
+        ComponentName receiver = new ComponentName(mContext, USBBroadcastReceiver.class);
+        PackageManager pm = mContext.getPackageManager();
+
+        boolean enabled = false;
+        int enabledSetting = pm.getComponentEnabledSetting(receiver);
+        switch(enabledSetting){
+            case PackageManager.COMPONENT_ENABLED_STATE_ENABLED:
+                enabled = true;
+            default:
         }
-    }
-
-    @Override
-    public void startTCPServer(){
-        // Start and Bind to TCPServer
-        Intent intent = new Intent(mActivity, TCPService.class);
-        mActivity.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    public void stopTCPServer(){
-        mActivity.unbindService(mConnection);
+        return enabled;
     }
 }

@@ -1,11 +1,11 @@
-package ph.edu.msuiit.rccarserver.tcp;
+package ph.edu.msuiit.rccarserver.background;
 
 import org.apache.tools.ant.filters.StringInputStream;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import javax.net.SocketFactory;
 import ph.edu.msuiit.rccarserver.MockingUtils;
@@ -46,6 +46,7 @@ public class TCPServerTaskTest {
         // create mock socket using Mockito
         SocketFactory socketFactory = MockingUtils.mockSocketFactory(mockOutputStream,inputStream);
         Socket mockSocket = socketFactory.createSocket();
+        when(mockSocket.getInetAddress()).thenReturn(mock(InetAddress.class));
 
         // create mock listener and set it as the current TCPServerListener
         TCPServer.TCPServerListener mockListener = mock(TCPServer.TCPServerListener.class);

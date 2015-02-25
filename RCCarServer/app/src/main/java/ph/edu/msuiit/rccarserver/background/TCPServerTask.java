@@ -1,4 +1,4 @@
-package ph.edu.msuiit.rccarserver.tcp;
+package ph.edu.msuiit.rccarserver.background;
 
 import android.util.Log;
 
@@ -37,12 +37,13 @@ public class TCPServerTask implements Runnable{
                     socketInput.close();
                 if(socketOutput != null)
                     socketOutput.close();
-                if(mSocket != null)
+                if(mSocket != null) {
+                    Log.d(TAG, "Client with IP " + mSocket.getInetAddress().getHostAddress() + " has disconnected.");
                     mSocket.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Log.d(TAG, "Client with IP " + mSocket.getInetAddress().getHostAddress() + " has disconnected.");
         }
     }
 
