@@ -3,21 +3,21 @@ package ph.edu.msuiit.rccarclient.tcp;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+
 import ph.edu.msuiit.rccarclient.R;
 import ph.edu.msuiit.rccarclient.models.ParcelableDevice;
 import ph.edu.msuiit.rccarclient.tcp.proto.ControlsPresenter;
 import ph.edu.msuiit.rccarclient.tcp.proto.ControlsView;
 
-public class ControlsFragment extends Fragment implements ControlsView, View.OnClickListener {
+public class ControlsFragment extends Fragment implements ControlsView, View.OnTouchListener {
     private static final String ARG_DEVICE = "device";
     private ParcelableDevice device;
-    private ControlsPresenterImpl mPresenter;
+    private ControlsPresenter mPresenter;
+    private TCPService mBoundService = null;
 
     public static ControlsFragment newInstance(ParcelableDevice device) {
         ControlsFragment fragment = new ControlsFragment();
@@ -44,31 +44,72 @@ public class ControlsFragment extends Fragment implements ControlsView, View.OnC
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_controls,
                 null);
 
-        root.findViewById(R.id.btnLeft).setOnClickListener(this);
-        root.findViewById(R.id.btnRight).setOnClickListener(this);
-        root.findViewById(R.id.btnForward).setOnClickListener(this);
-        root.findViewById(R.id.btnBackward).setOnClickListener(this);
+        root.findViewById(R.id.btnLeft).setOnTouchListener(this);
+        root.findViewById(R.id.btnRight).setOnTouchListener(this);
+        root.findViewById(R.id.btnForward).setOnTouchListener(this);
+        root.findViewById(R.id.btnBackward).setOnTouchListener(this);
 
-        mPresenter = new ControlsPresenterImpl(this, new ControlsInteractorImpl());
+        mPresenter = new ControlsPresenterImpl(this, new ControlsInteractorImpl(getActivity(), mBoundService));
+        mPresenter.onStart(device);
+
         return root;
     }
 
     @Override
-    public void onClick(View v) {
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
         switch(v.getId()){
             case R.id.btnForward:
-                mPresenter.onForwardButtonClick();
-                break;
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        mPresenter.onForwardButtonTouched();
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        mPresenter.onForwardButtonReleased();
+                        return true;
+                }
+
             case R.id.btnBackward:
-                mPresenter.onBackwardButtonClick();
-                break;
-            case R.id.btnLeft:
-                mPresenter.onLeftButtonClick();
-                break;
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        mPresenter.onBackwardButtonTouched();
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        mPresenter.onBackwardButtonReleased();
+                        return true;
+                }
+
             case R.id.btnRight:
-                mPresenter.onRightButtonClick();
-                break;
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        mPresenter.onRightButtonTouched();
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        mPresenter.onRightButtonReleased();
+                        return true;
+                }
+
+            case R.id.btnLeft:
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        mPresenter.onLeftButtonTouched();
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        mPresenter.onLeftButtonReleased();
+                        return true;
+                }
+
             default:
+                return false;
         }
     }
 }

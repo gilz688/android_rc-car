@@ -1,5 +1,6 @@
 package ph.edu.msuiit.rccarclient.tcp;
 
+import ph.edu.msuiit.rccarclient.models.Device;
 import ph.edu.msuiit.rccarclient.tcp.proto.ControlsInteractor;
 import ph.edu.msuiit.rccarclient.tcp.proto.ControlsPresenter;
 import ph.edu.msuiit.rccarclient.tcp.proto.ControlsView;
@@ -14,22 +15,47 @@ public class ControlsPresenterImpl implements ControlsPresenter{
     }
 
     @Override
-    public void onLeftButtonClick() {
-
+    public void onStart(Device device) {
+        mInteractor.establishTCPConnection(device);
     }
 
     @Override
-    public void onRightButtonClick() {
-
+    public void onForwardButtonTouched() {
+        mInteractor.steerForward();
     }
 
     @Override
-    public void onForwardButtonClick() {
-
+    public void onForwardButtonReleased() {
+        mInteractor.stopSteerForward();
     }
 
     @Override
-    public void onBackwardButtonClick() {
+    public void onBackwardButtonTouched() {
+        mInteractor.steerBackward();
+    }
 
+    @Override
+    public void onBackwardButtonReleased() {
+        mInteractor.stopSteerBackward();
+    }
+
+    @Override
+    public void onRightButtonTouched() {
+        mInteractor.steerRight();
+    }
+
+    @Override
+    public void onRightButtonReleased() {
+        mInteractor.stopSteerRight();
+    }
+
+    @Override
+    public void onLeftButtonTouched() {
+        mInteractor.steerLeft();
+    }
+
+    @Override
+    public void onLeftButtonReleased() {
+        mInteractor.stopSteerLeft();
     }
 }

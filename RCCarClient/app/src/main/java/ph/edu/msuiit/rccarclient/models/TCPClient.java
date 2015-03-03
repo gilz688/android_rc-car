@@ -4,51 +4,72 @@ import android.util.Log;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class TCPClient {
+public class TCPClient extends Thread {
     private static final String TAG = "TCPClient";
     public static final int DEFAULT_PORT = 19876;
 
-    private Socket mSocket;
-    private InetAddress remoteAddress;
-    private int port;
+    private Socket connectionSocket;
+    private InetAddress serverAddress;
+    private int serverPort;
 
-
-    public TCPClient(InetAddress remoteAddress){
-        this.remoteAddress = remoteAddress;
-        this.port = DEFAULT_PORT;
+    public TCPClient(InetAddress serverAddress){
+        this.serverAddress = serverAddress;
+        serverPort = DEFAULT_PORT;
     }
 
-    public TCPClient(InetAddress remoteAddress, int port) {
-        this.remoteAddress = remoteAddress;
-        this.port = port;
+    public TCPClient(InetAddress address, int port) {
+        serverAddress = address;
+        serverPort = port;
     }
 
-    public void startConnection() throws IOException {
-        mSocket = null;
+    @Override
+    public void run() {
         try {
-            mSocket= new Socket(remoteAddress, port);
-            Log.d(TAG, "Connected to Server. IP: " +mSocket.getInetAddress()+ ": " +mSocket.getPort());
+            connectToServer();
+        }catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG,e.getMessage());
+        }
+    }
+
+    public void connectToServer() throws IOException {
+        connectionSocket = null;
+        try {
+            connectionSocket = new Socket(serverAddress, serverPort);
+            Log.d(TAG, "Connected to Server. IP: " +connectionSocket.getInetAddress()+ ": " +connectionSocket.getPort());
         } catch (SocketException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    public void sendRequest(String message) throws IOException {
-        byte[] buff = message.getBytes();
-        DataOutputStream output = new DataOutputStream(mSocket.getOutputStream());
-        output.write(buff);
-        Log.d(TAG, "Message: " +message);
+    public void sendCommand(String command) {
+        try {
+            OutputStream os = connectionSocket.getOutputStream();
+            PrintStream ps = new PrintStream(os);
+            ps.println(command);
+            Log.d(TAG, "Command sent: " +command);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public boolean isSocketConnected() {
-        return mSocket.isConnected();
+    public boolean isStopped() {
+        return (!connectionSocket.isConnected() && this.isInterrupted());
     }
 
-    public void disconnect() throws IOException {
-        mSocket.close();
+    public void stopClient() {
+        try {
+            connectionSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            this.interrupt();
+        }
     }
 }

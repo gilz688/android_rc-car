@@ -1,67 +1,58 @@
 package ph.edu.msuiit.rccarclient.tcp;
 
-
-import android.app.IntentService;
+import android.app.Service;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
+import android.os.Binder;
+import android.os.IBinder;
 import android.util.Log;
-
-import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
+import ph.edu.msuiit.rccarclient.models.Device;
 import ph.edu.msuiit.rccarclient.models.TCPClient;
 
-public class TCPService extends IntentService {
-
-    public static final String INTENT_START_TCP_SERVICE = "INTENT_START_TCP_SERVICE";
-
-    public static final String ACTION_TCP_CONNECTED = "ACTION_TCP_CONNECTED";
-    public static final String ACTION_TCP_DISCONNECTED = "ACTION_TCP_DISCONNECTED";
-    public static final String ACTION_TCP_ERROR = "ACTION_TCP_ERROR";
-    public static final String ACTION_TCP_DATA_SENT = "ACTION_TCP_DATA_SENT";
-
+public class TCPService extends Service {
     private static final String TAG = "TCPService";
+    private final IBinder mBinder = new TCPServiceBinder();
+    private TCPClient mClient;
 
-    public TCPService() {
-        super(TCPService.class.getName());
-    }
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        Log.d(TAG, "TCP Service started.");
+    public static final String MSG_STEER_FORWARD = "FORWARD";
+    public static final String MSG_STOP_STEER_FORWARD = "STOP FORWARD";
+    public static final String MSG_STEER_BACKWARD = "BACKWARD";
+    public static final String MSG_STOP_STEER_BACKWARD = "STOP BACKWARD";
+    public static final String MSG_STEER_RIGHT = "RIGHT";
+    public static final String MSG_STOP_STEER_RIGHT = "STOP RIGHT";
+    public static final String MSG_STEER_LEFT = "LEFT";
+    public static final String MSG_STOP_STEER_LEFT = "STOP LEFT";
 
-        String action = intent.getAction();
-        switch(action) {
-            case INTENT_START_TCP_SERVICE:
-                TCPClient mClient;
-                InetAddress serverAddress = null;
-                int serverPort = intent.getIntExtra("serverPort", TCPClient.DEFAULT_PORT);
-
-                try {
-                    serverAddress = InetAddress.getByAddress(intent.getByteArrayExtra("serverAddress"));
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                }
-
-                Log.d(TAG, "Device Name: " +intent.getStringExtra("serverName"));
-                Log.d(TAG, "Device Address: " +serverAddress);
-                Log.d(TAG, "Device Port: " +serverPort);
-
-                mClient = new TCPClient(serverAddress, TCPClient.DEFAULT_PORT);
-                try {
-                    mClient.startConnection();
-                    sendMessage(ACTION_TCP_CONNECTED);
-                    mClient.sendRequest("request");
-                    sendMessage(ACTION_TCP_DATA_SENT);
-                } catch (IOException e) {
-                    sendMessage(ACTION_TCP_ERROR);
-                    Log.e(TAG,e.getMessage());
-                }
+    public class TCPServiceBinder extends Binder {
+        public TCPService getService() {
+            return TCPService.this;
         }
     }
 
-    private void sendMessage(String action) {
-        Intent intent = new Intent(action);
-        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+    @Override
+    public IBinder onBind(Intent intent) {
+        Device device = (Device) intent.getExtras().getParcelable("device");
+        startTCPClient(device.getIpAddress(), TCPClient.DEFAULT_PORT);
+        Log.d(TAG, "Service Bind");
+        return mBinder;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if((mClient != null) && (!mClient.isStopped())) {
+            mClient.stopClient();
+        }
+        Log.d(TAG,"TCPService has been stopped.");
+    }
+
+    public void startTCPClient(InetAddress serverAddress, int port) {
+        mClient = new TCPClient(serverAddress, port);
+        mClient.start();
+    }
+
+    public void sendCommand(String command) {
+        mClient.sendCommand(command);
     }
 }
