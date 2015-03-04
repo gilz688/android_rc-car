@@ -14,10 +14,10 @@ import ph.edu.msuiit.rccarclient.tcp.proto.ControlsInteractor;
 public class ControlsInteractorImpl implements ControlsInteractor {
     private Activity mActivity;
     private TCPService mBoundService;
-
     private ServiceConnection mConnection;
 
-
+    public static final int RC_CAR_SPEED = 255;
+    public static final int RC_CAR_STEERING_ANGLE = 60;
 
     public ControlsInteractorImpl(Activity activity, TCPService boundService){
         mActivity = activity;
@@ -47,44 +47,29 @@ public class ControlsInteractorImpl implements ControlsInteractor {
 
     @Override
     public void steerForward() {
-        mBoundService.sendCommand(TCPService.MSG_STEER_FORWARD);
+        move(true, RC_CAR_SPEED);
     }
-    @Override
-    public void stopSteerForward() {
-        mBoundService.sendCommand(TCPService.MSG_STOP_STEER_FORWARD);
-    }
-
-
 
     @Override
     public void steerBackward() {
-        mBoundService.sendCommand(TCPService.MSG_STEER_BACKWARD);
+        move(false, RC_CAR_SPEED);
     }
+
     @Override
-    public void stopSteerBackward() {
-        mBoundService.sendCommand(TCPService.MSG_STOP_STEER_BACKWARD);
+    public void stop() {
+        mBoundService.sendStopCommand();
     }
 
 
 
     @Override
     public void steerRight() {
-        mBoundService.sendCommand(TCPService.MSG_STEER_RIGHT);
+        mBoundService.sendCommand(TCPService.MSG_STEER_RIGHT, RC_CAR_STEERING_ANGLE);
     }
-    @Override
-    public void stopSteerRight() {
-        mBoundService.sendCommand(TCPService.MSG_STOP_STEER_RIGHT);
-    }
-
-
 
     @Override
     public void steerLeft() {
-        mBoundService.sendCommand(TCPService.MSG_STEER_LEFT);
-    }
-    @Override
-    public void stopSteerLeft() {
-        mBoundService.sendCommand(TCPService.MSG_STOP_STEER_LEFT);
+        mBoundService.sendCommand(TCPService.MSG_STEER_LEFT, RC_CAR_STEERING_ANGLE);
     }
 
 
@@ -95,7 +80,12 @@ public class ControlsInteractorImpl implements ControlsInteractor {
     }
 
     @Override
-    public void move(boolean forward, int value) {
-
+    public void move(boolean forward, int speed) {
+        if(forward) {
+            mBoundService.sendCommand(TCPService.MSG_STEER_FORWARD, speed);
+        }
+        else {
+            mBoundService.sendCommand(TCPService.MSG_STEER_BACKWARD, speed);
+        }
     }
 }

@@ -7,16 +7,12 @@ public interface ControlsInteractor {
     public void establishTCPConnection(Device device);
 
     public void steerForward();
-    public void stopSteerForward();
-
     public void steerBackward();
-    public void stopSteerBackward();
+    public void stop();
 
     public void steerRight();
-    public void stopSteerRight();
-
     public void steerLeft();
-    public void stopSteerLeft();
+
     /*
      *  angle (-45 to 45)
      */

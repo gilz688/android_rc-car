@@ -15,14 +15,12 @@ public class TCPService extends Service {
     private final IBinder mBinder = new TCPServiceBinder();
     private TCPClient mClient;
 
-    public static final String MSG_STEER_FORWARD = "FORWARD";
-    public static final String MSG_STOP_STEER_FORWARD = "STOP FORWARD";
-    public static final String MSG_STEER_BACKWARD = "BACKWARD";
-    public static final String MSG_STOP_STEER_BACKWARD = "STOP BACKWARD";
-    public static final String MSG_STEER_RIGHT = "RIGHT";
-    public static final String MSG_STOP_STEER_RIGHT = "STOP RIGHT";
-    public static final String MSG_STEER_LEFT = "LEFT";
-    public static final String MSG_STOP_STEER_LEFT = "STOP LEFT";
+    public static final String MSG_STEER_FORWARD = "forward";
+    public static final String MSG_STEER_BACKWARD = "backward";
+    public static final String MSG_STOP = "stop";
+
+    public static final String MSG_STEER_RIGHT = "right";
+    public static final String MSG_STEER_LEFT = "left";
 
     public class TCPServiceBinder extends Binder {
         public TCPService getService() {
@@ -43,8 +41,8 @@ public class TCPService extends Service {
         super.onDestroy();
         if((mClient != null) && (mClient.isRunning())) {
             mClient.stopClient();
+            Log.d(TAG,"TCPService has been stopped.");
         }
-        Log.d(TAG,"TCPService has been stopped.");
     }
 
     public void startTCPClient(InetAddress serverAddress, int port) {
@@ -52,7 +50,11 @@ public class TCPService extends Service {
         mClient.startClient();
     }
 
-    public void sendCommand(String command) {
-        mClient.sendCommand(command);
+    public void sendCommand(String command, int value) {
+        mClient.sendCommand(command + "[" + value + "]");
+    }
+
+    public void sendStopCommand() {
+        mClient.sendCommand(MSG_STOP);
     }
 }

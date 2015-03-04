@@ -26,7 +26,7 @@ public class ControlsPresenterImpl implements ControlsPresenter{
 
     @Override
     public void onForwardButtonReleased() {
-        mInteractor.stopSteerForward();
+        mInteractor.stop();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ControlsPresenterImpl implements ControlsPresenter{
 
     @Override
     public void onBackwardButtonReleased() {
-        mInteractor.stopSteerBackward();
+        mInteractor.stop();
     }
 
     @Override
@@ -46,16 +46,13 @@ public class ControlsPresenterImpl implements ControlsPresenter{
 
     @Override
     public void onRightButtonReleased() {
-        mInteractor.stopSteerRight();
     }
 
     @Override
     public void onLeftButtonTouched() {
         mInteractor.steerLeft();
     }
-
     @Override
     public void onLeftButtonReleased() {
-        mInteractor.stopSteerLeft();
     }
 }
