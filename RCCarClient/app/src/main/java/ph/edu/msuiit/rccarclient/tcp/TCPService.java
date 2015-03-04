@@ -41,7 +41,7 @@ public class TCPService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if((mClient != null) && (!mClient.isStopped())) {
+        if((mClient != null) && (mClient.isRunning())) {
             mClient.stopClient();
         }
         Log.d(TAG,"TCPService has been stopped.");
@@ -49,7 +49,7 @@ public class TCPService extends Service {
 
     public void startTCPClient(InetAddress serverAddress, int port) {
         mClient = new TCPClient(serverAddress, port);
-        mClient.start();
+        mClient.startClient();
     }
 
     public void sendCommand(String command) {

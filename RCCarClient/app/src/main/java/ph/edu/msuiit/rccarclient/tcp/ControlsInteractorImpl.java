@@ -15,23 +15,24 @@ public class ControlsInteractorImpl implements ControlsInteractor {
     private Activity mActivity;
     private TCPService mBoundService;
 
-    ServiceConnection mConnection = new ServiceConnection() {
-
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            mBoundService = ((TCPService.TCPServiceBinder)service).getService();
-            TCPService.TCPServiceBinder binder = (TCPService.TCPServiceBinder) service;
-            mBoundService = binder.getService();
-        }
-        public void onServiceDisconnected(ComponentName className) {
-            mBoundService = null;
-        }
-    };
+    private ServiceConnection mConnection;
 
 
 
     public ControlsInteractorImpl(Activity activity, TCPService boundService){
         mActivity = activity;
         mBoundService = boundService;
+
+        mConnection = new ServiceConnection() {
+            public void onServiceConnected(ComponentName className, IBinder service) {
+                mBoundService = ((TCPService.TCPServiceBinder)service).getService();
+                TCPService.TCPServiceBinder binder = (TCPService.TCPServiceBinder) service;
+                mBoundService = binder.getService();
+            }
+            public void onServiceDisconnected(ComponentName className) {
+                mBoundService = null;
+            }
+        };
     }
 
 
