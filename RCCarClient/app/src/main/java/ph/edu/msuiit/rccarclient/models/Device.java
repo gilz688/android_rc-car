@@ -7,11 +7,6 @@ public class Device {
     private InetAddress ipAddress;
     private int port;
 
-    public Device(String name, InetAddress ipAddress) {
-        this.name = name;
-        this.ipAddress = ipAddress;
-    }
-
     public Device(String name, InetAddress ipAddress, int port) {
         this.name = name;
         this.ipAddress = ipAddress;

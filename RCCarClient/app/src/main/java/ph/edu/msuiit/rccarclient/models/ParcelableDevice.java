@@ -26,17 +26,17 @@ public class ParcelableDevice extends Device implements Parcelable{
     }
 
     private ParcelableDevice(Parcel in) {
-        super(null,null);
+        super(null,null,0);
         String name = in.readString();
         setName(name);
         byte[] rawAddress = new byte[4];
         in.readByteArray(rawAddress);
-        InetAddress address = null;
+        InetAddress address;
         try {
             address = InetAddress.getByAddress(rawAddress);
             setIpAddress(address);
         } catch (UnknownHostException e) {
-
+            e.printStackTrace();
         }
         int port = in.readInt();
         setPort(port);
