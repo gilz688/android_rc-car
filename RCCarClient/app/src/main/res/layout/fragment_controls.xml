@@ -27,10 +27,11 @@
             android:id="@+id/btnBackward"
             android:background="@drawable/button_backward"
             android:layout_margin="10dp" />
+
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout"
@@ -40,18 +41,13 @@
         android:layout_marginLeft="54dp"
         android:layout_marginStart="54dp">
 
-        <ImageButton
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:id="@+id/btnLeft"
-            android:background="@drawable/button_right"
-            android:layout_margin="10dp" />
-
-        <ImageButton
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:id="@+id/btnRight"
-            android:background="@drawable/button_left"
-            android:layout_margin="10dp" />
+        <ph.edu.msuiit.rccarclient.utils.ControlsSeekBar
+            android:id="@+id/horizontal_seek_bar"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:progress="0"
+            android:progressDrawable="@drawable/progress"
+            android:thumb="@drawable/ic_launcher"
+            />
     </LinearLayout>
 </RelativeLayout>

@@ -17,11 +17,9 @@ public class ControlsInteractorImpl implements ControlsInteractor {
     private ServiceConnection mConnection;
 
     public static final int RC_CAR_SPEED = 255;
-    public static final int RC_CAR_STEERING_ANGLE = 60;
 
-    public ControlsInteractorImpl(Activity activity, TCPService boundService){
+    public ControlsInteractorImpl(Activity activity){
         mActivity = activity;
-        mBoundService = boundService;
 
         mConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder service) {
@@ -43,6 +41,10 @@ public class ControlsInteractorImpl implements ControlsInteractor {
         mActivity.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
+    @Override
+    public void stopTCPConnection() {
+        mActivity.unbindService(mConnection);
+    }
 
 
     @Override
@@ -61,25 +63,21 @@ public class ControlsInteractorImpl implements ControlsInteractor {
     }
 
 
-
     @Override
-    public void steerRight() {
-        mBoundService.sendCommand(TCPService.MSG_STEER_RIGHT, RC_CAR_STEERING_ANGLE);
+    public void steerRight(int angle) {
+        mBoundService.sendCommand(TCPService.MSG_STEER_RIGHT, angle);
     }
 
     @Override
-    public void steerLeft() {
-        mBoundService.sendCommand(TCPService.MSG_STEER_LEFT, RC_CAR_STEERING_ANGLE);
+    public void steerLeft(int angle) {
+        mBoundService.sendCommand(TCPService.MSG_STEER_RIGHT, angle);
     }
 
+    @Override
     public void center() {
         mBoundService.sendCenterCommand();
     }
 
-    @Override
-    public void steer(int angle) {
-
-    }
     public void move(boolean forward, int speed) {
         if(forward) {
             mBoundService.sendCommand(TCPService.MSG_STEER_FORWARD, speed);

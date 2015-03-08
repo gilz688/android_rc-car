@@ -32,8 +32,8 @@ public class TCPService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Device device = (Device) intent.getParcelableExtra("device");
-        startTCPClient(device.getIpAddress(), device.getPort());
-        Log.d(TAG, "Service Bind");
+        mClient = new TCPClient(device.getIpAddress());
+        mClient.startClient();
         return mBinder;
     }
 
@@ -44,11 +44,6 @@ public class TCPService extends Service {
             mClient.stopClient();
             Log.d(TAG,"TCPService has been stopped.");
         }
-    }
-
-    public void startTCPClient(InetAddress serverAddress, int port) {
-        mClient = new TCPClient(serverAddress, port);
-        mClient.startClient();
     }
 
     public void sendCommand(String command, int value) {

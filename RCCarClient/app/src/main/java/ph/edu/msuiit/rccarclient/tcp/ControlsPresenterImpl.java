@@ -20,6 +20,11 @@ public class ControlsPresenterImpl implements ControlsPresenter{
     }
 
     @Override
+    public void onEnd() {
+        mInteractor.stopTCPConnection();
+    }
+
+    @Override
     public void onForwardButtonTouched() {
         mInteractor.steerForward();
     }
@@ -40,21 +45,17 @@ public class ControlsPresenterImpl implements ControlsPresenter{
     }
 
     @Override
-    public void onRightButtonTouched() {
-        mInteractor.steerRight();
+    public void onSeekBarProgressChangedRight(int value) {
+        mInteractor.steerRight(value);
     }
 
     @Override
-    public void onRightButtonReleased() {
-        mInteractor.center();
+    public void onSeekBarProgressChangedLeft(int value) {
+        mInteractor.steerLeft(value);
     }
 
     @Override
-    public void onLeftButtonTouched() {
-        mInteractor.steerLeft();
-    }
-    @Override
-    public void onLeftButtonReleased() {
+    public void onSeekBarCentered() {
         mInteractor.center();
     }
 }

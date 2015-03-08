@@ -16,7 +16,7 @@ import java.util.concurrent.Future;
 
 public class TCPClient extends Thread {
     private static final String TAG = "TCPClient";
-    public static final int DEFAULT_PORT = 19876;
+    public static final int DEFAULT_PORT = 19877;
 
     private ExecutorService executor;
     private volatile boolean isRunning = false;

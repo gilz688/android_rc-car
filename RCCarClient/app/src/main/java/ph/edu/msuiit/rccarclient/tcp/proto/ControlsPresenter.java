@@ -4,6 +4,7 @@ import ph.edu.msuiit.rccarclient.models.Device;
 
 public interface ControlsPresenter {
     public void onStart(Device device);
+    public void onEnd();
 
     public void onForwardButtonTouched();
     public void onForwardButtonReleased();
@@ -11,9 +12,7 @@ public interface ControlsPresenter {
     public void onBackwardButtonTouched();
     public void onBackwardButtonReleased();
 
-    public void onRightButtonTouched();
-    public void onRightButtonReleased();
-
-    public void onLeftButtonTouched();
-    public void onLeftButtonReleased();
+    public void onSeekBarProgressChangedRight(int value);
+    public void onSeekBarProgressChangedLeft(int value);
+    public void onSeekBarCentered();
 }

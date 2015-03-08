@@ -1,0 +1,17 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <item android:id="@android:id/background">
+        <shape>
+            <corners android:radius="5dip" />
+            <gradient
+                android:startColor="@color/primary"
+                android:centerColor="#FFF"
+                android:centerY="0.5"
+                android:endColor="@color/primary"
+                android:angle="270"
+                />
+        </shape>
+    </item>
+</layer-list>
