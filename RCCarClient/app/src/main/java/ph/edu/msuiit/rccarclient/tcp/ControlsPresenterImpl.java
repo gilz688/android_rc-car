@@ -16,7 +16,7 @@ public class ControlsPresenterImpl implements ControlsPresenter{
 
     @Override
     public void onStart(Device device) {
-        mInteractor.establishTCPConnection(device);
+        mInteractor.startTCPConnection(device);
     }
 
     @Override
@@ -24,38 +24,18 @@ public class ControlsPresenterImpl implements ControlsPresenter{
         mInteractor.stopTCPConnection();
     }
 
+
+
     @Override
-    public void onForwardButtonTouched() {
-        mInteractor.steerForward();
+    public void onVSeekBarProgressChanged(int value) {
+        mInteractor.move(value);
     }
 
     @Override
-    public void onForwardButtonReleased() {
-        mInteractor.stop();
+    public void onHSeekBarProgressChanged(int value) {
+        mInteractor.steer(value);
     }
 
-    @Override
-    public void onBackwardButtonTouched() {
-        mInteractor.steerBackward();
-    }
 
-    @Override
-    public void onBackwardButtonReleased() {
-        mInteractor.stop();
-    }
 
-    @Override
-    public void onSeekBarProgressChangedRight(int value) {
-        mInteractor.steerRight(value);
-    }
-
-    @Override
-    public void onSeekBarProgressChangedLeft(int value) {
-        mInteractor.steerLeft(value);
-    }
-
-    @Override
-    public void onSeekBarCentered() {
-        mInteractor.center();
-    }
 }

@@ -3,51 +3,27 @@
     android:layout_height="match_parent"
     tools:context="ph.edu.msuiit.rccarclient.tcp.ControlsFragment">
 
+    <ph.edu.msuiit.rccarclient.utils.ControlsSeekBar
+        android:id="@+id/horizontal_seek_bar"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="70dp"
+        android:progress="0"
+        android:progressDrawable="@drawable/progress"
+        android:thumb="@drawable/ic_launcher"
+        />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
+    <ph.edu.msuiit.rccarclient.utils.ControlsSeekBar
+        android:id="@+id/vertical_seek_bar"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="61dp"
-        android:layout_marginEnd="61dp">
-
-        <ImageButton
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:id="@+id/btnForward"
-            android:background="@drawable/button_forward"
-            android:layout_margin="10dp" />
-
-        <ImageButton
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:id="@+id/btnBackward"
-            android:background="@drawable/button_backward"
-            android:layout_margin="10dp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/linearLayout"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="54dp"
-        android:layout_marginStart="54dp">
-
-        <ph.edu.msuiit.rccarclient.utils.ControlsSeekBar
-            android:id="@+id/horizontal_seek_bar"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:progress="0"
-            android:progressDrawable="@drawable/progress"
-            android:thumb="@drawable/ic_launcher"
-            />
-    </LinearLayout>
+        android:progress="0"
+        android:progressDrawable="@drawable/progress"
+        android:thumb="@drawable/ic_launcher"
+        android:rotation="270"
+        />
 </RelativeLayout>

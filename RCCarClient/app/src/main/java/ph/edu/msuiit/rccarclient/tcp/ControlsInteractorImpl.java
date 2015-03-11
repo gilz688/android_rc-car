@@ -14,28 +14,14 @@ import ph.edu.msuiit.rccarclient.tcp.proto.ControlsInteractor;
 public class ControlsInteractorImpl implements ControlsInteractor {
     private Activity mActivity;
     private TCPService mBoundService;
-    private ServiceConnection mConnection;
 
-    public static final int RC_CAR_SPEED = 255;
 
     public ControlsInteractorImpl(Activity activity){
         mActivity = activity;
-
-        mConnection = new ServiceConnection() {
-            public void onServiceConnected(ComponentName className, IBinder service) {
-                mBoundService = ((TCPService.TCPServiceBinder)service).getService();
-                TCPService.TCPServiceBinder binder = (TCPService.TCPServiceBinder) service;
-                mBoundService = binder.getService();
-            }
-            public void onServiceDisconnected(ComponentName className) {
-                mBoundService = null;
-            }
-        };
     }
 
-
     @Override
-    public void establishTCPConnection(Device device) {
+    public void startTCPConnection(Device device) {
         Intent intent = new Intent(mActivity, TCPService.class);
         intent.putExtra("device", new ParcelableDevice(device));
         mActivity.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -48,42 +34,30 @@ public class ControlsInteractorImpl implements ControlsInteractor {
 
 
     @Override
-    public void steerForward() {
-        move(true, RC_CAR_SPEED);
+    public void move(int speed) {
+        if(speed != 0)
+            mBoundService.sendCommand(TCPService.ACTION_MOVE, speed);
+        else
+            mBoundService.sendStopCommand();
     }
 
     @Override
-    public void steerBackward() {
-        move(false, RC_CAR_SPEED);
+    public void steer(int angle) {
+        if(angle != 0)
+            mBoundService.sendCommand(TCPService.ACTION_STEER, angle);
+        else
+            mBoundService.sendCenterCommand();
     }
 
-    @Override
-    public void stop() {
-        mBoundService.sendStopCommand();
-    }
 
-
-    @Override
-    public void steerRight(int angle) {
-        mBoundService.sendCommand(TCPService.MSG_STEER_RIGHT, angle);
-    }
-
-    @Override
-    public void steerLeft(int angle) {
-        mBoundService.sendCommand(TCPService.MSG_STEER_RIGHT, angle);
-    }
-
-    @Override
-    public void center() {
-        mBoundService.sendCenterCommand();
-    }
-
-    public void move(boolean forward, int speed) {
-        if(forward) {
-            mBoundService.sendCommand(TCPService.MSG_STEER_FORWARD, speed);
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            mBoundService = ((TCPService.TCPServiceBinder)service).getService();
+            TCPService.TCPServiceBinder binder = (TCPService.TCPServiceBinder) service;
+            mBoundService = binder.getService();
         }
-        else {
-            mBoundService.sendCommand(TCPService.MSG_STEER_BACKWARD, speed);
+        public void onServiceDisconnected(ComponentName className) {
+            mBoundService = null;
         }
-    }
+    };
 }

@@ -15,11 +15,12 @@ import ph.edu.msuiit.rccarclient.tcp.proto.ControlsPresenter;
 import ph.edu.msuiit.rccarclient.tcp.proto.ControlsView;
 import ph.edu.msuiit.rccarclient.utils.ControlsSeekBar;
 
-public class ControlsFragment extends Fragment implements ControlsView, View.OnTouchListener, ControlsSeekBar.OnSeekBarChangeListener{
+public class ControlsFragment extends Fragment implements ControlsView, ControlsSeekBar.OnSeekBarChangeListener{
     private static final String ARG_DEVICE = "device";
     private ParcelableDevice device;
     private ControlsPresenter mPresenter;
 
+    private ControlsSeekBar verticalSeekBar;
     private ControlsSeekBar horizontalSeekBar;
 
     public static ControlsFragment newInstance(ParcelableDevice device) {
@@ -47,8 +48,12 @@ public class ControlsFragment extends Fragment implements ControlsView, View.OnT
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_controls,
                 null);
 
-        root.findViewById(R.id.btnForward).setOnTouchListener(this);
-        root.findViewById(R.id.btnBackward).setOnTouchListener(this);
+
+        verticalSeekBar = (ControlsSeekBar) root.findViewById(R.id.vertical_seek_bar);
+        verticalSeekBar.setMaxValue(255);
+        verticalSeekBar.setMinValue(-255);
+        verticalSeekBar.setProgressValue(0);
+        verticalSeekBar.setOnSeekBarChangeListener(this);
 
         horizontalSeekBar = (ControlsSeekBar) root.findViewById(R.id.horizontal_seek_bar);
         horizontalSeekBar.setMaxValue(60);
@@ -75,45 +80,14 @@ public class ControlsFragment extends Fragment implements ControlsView, View.OnT
     }
 
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch(v.getId()){
-            case R.id.btnForward:
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        mPresenter.onForwardButtonTouched();
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        mPresenter.onForwardButtonReleased();
-                        return true;
-                }
-
-            case R.id.btnBackward:
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        mPresenter.onBackwardButtonTouched();
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        mPresenter.onBackwardButtonReleased();
-                        return true;
-                }
-            default:
-                return false;
-        }
-    }
-
-    @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         switch(seekBar.getId()) {
+            case (R.id.vertical_seek_bar):
+                mPresenter.onVSeekBarProgressChanged(progress);
+                break;
+
             case (R.id.horizontal_seek_bar):
-                if(progress > 0) {
-                    mPresenter.onSeekBarProgressChangedRight(progress);
-                }
-                else if (progress < 0) {
-                    mPresenter.onSeekBarProgressChangedLeft(progress);
-                }
-                else {
-                    mPresenter.onSeekBarCentered();
-                }
+                mPresenter.onHSeekBarProgressChanged(progress);
                 break;
         }
     }
@@ -127,6 +101,10 @@ public class ControlsFragment extends Fragment implements ControlsView, View.OnT
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         switch(seekBar.getId()) {
+            case (R.id.vertical_seek_bar):
+                verticalSeekBar.setProgressValue(0);
+                break;
+
             case (R.id.horizontal_seek_bar):
                 horizontalSeekBar.setProgressValue(0);
                 break;

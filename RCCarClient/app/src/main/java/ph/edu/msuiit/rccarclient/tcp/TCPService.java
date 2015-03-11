@@ -15,13 +15,10 @@ public class TCPService extends Service {
     private final IBinder mBinder = new TCPServiceBinder();
     private TCPClient mClient;
 
-    public static final String MSG_STEER_FORWARD = "forward";
-    public static final String MSG_STEER_BACKWARD = "backward";
-    public static final String MSG_STOP = "stop";
-
-    public static final String MSG_STEER_RIGHT = "right";
-    public static final String MSG_STEER_LEFT = "left";
-    public static final String MSG_CENTER = "center";
+    public static final String ACTION_MOVE = "move";
+    public static final String ACTION_STEER = "steer";
+    public static final String ACTION_STOP = "stop";
+    public static final String ACTION_CENTER = "center";
 
     public class TCPServiceBinder extends Binder {
         public TCPService getService() {
@@ -51,10 +48,10 @@ public class TCPService extends Service {
     }
 
     public void sendStopCommand() {
-        mClient.sendCommand(MSG_STOP);
+        mClient.sendCommand(ACTION_STOP);
     }
 
     public void sendCenterCommand() {
-        mClient.sendCommand(MSG_CENTER);
+        mClient.sendCommand(ACTION_CENTER);
     }
 }
