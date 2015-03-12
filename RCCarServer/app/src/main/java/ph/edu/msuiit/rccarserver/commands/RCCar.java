@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import tw.com.prolific.driver.pl2303.PL2303Driver;
 
-
 public class RCCar{
     private static final String TAG = "RCCar";
     public static final String ACTION_USB_PERMISSION = "ph.edu.msuiit.rccarserver.USB_PERMISSION";
@@ -17,7 +16,6 @@ public class RCCar{
     }
 
     public void connect() throws IOException {
-        Log.d(TAG, "Enter  openUsbSerial");
         if(null==mSerial)
             return;
         if(!mSerial.isConnected()) {
@@ -51,7 +49,7 @@ public class RCCar{
     }
 
     public void send(String command) throws IOException {
-        int res = mSerial.write(command.concat("\n").getBytes(), command.length() + 1);
+        int res = mSerial.write(command.concat("\r").getBytes(), command.length() + 1);
         if( res < 0 ) {
             throw new SerialSendingException();
         }
