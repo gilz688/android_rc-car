@@ -78,8 +78,8 @@ public class TCPClient extends Thread {
         }
     }
 
-    public void sendCommand(String command) {
-        CommandSender cs = new CommandSender(command);
+    public void sendCommand(String command, int value) {
+        CommandSender cs = new CommandSender(command, value);
         Future<?> future = executor.submit(cs);
         try {
             if (future.get() == null) {
@@ -96,18 +96,21 @@ public class TCPClient extends Thread {
 
     class CommandSender implements Runnable {
         private String command;
+        private int value;
 
-        CommandSender (String command) {
+        CommandSender (String command, int value) {
             this.command = command;
+            this.value = value;
         }
         @Override
         public void run() {
             OutputStream os;
             PrintStream ps;
             try {
+                String finalCommand = command + " [" + value + "]";
                 os = connectionSocket.getOutputStream();
                 ps = new PrintStream(os);
-                ps.println(command);
+                ps.println(finalCommand);
                 Log.d(TAG, "Command sent: " +command);
             } catch (IOException e) {
                 e.printStackTrace();

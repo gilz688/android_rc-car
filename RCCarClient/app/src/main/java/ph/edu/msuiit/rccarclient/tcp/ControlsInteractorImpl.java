@@ -35,18 +35,12 @@ public class ControlsInteractorImpl implements ControlsInteractor {
 
     @Override
     public void move(int speed) {
-        if(speed != 0)
-            mBoundService.sendCommand(TCPService.ACTION_MOVE, speed);
-        else
-            mBoundService.sendStopCommand();
+        mBoundService.sendCommand(TCPService.ACTION_MOVE, speed);
     }
 
     @Override
     public void steer(int angle) {
-        if(angle != 0)
-            mBoundService.sendCommand(TCPService.ACTION_STEER, angle);
-        else
-            mBoundService.sendCenterCommand();
+        mBoundService.sendCommand(TCPService.ACTION_STEER, angle);
     }
 
 

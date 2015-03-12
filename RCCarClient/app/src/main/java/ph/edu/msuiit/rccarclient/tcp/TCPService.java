@@ -44,14 +44,6 @@ public class TCPService extends Service {
     }
 
     public void sendCommand(String command, int value) {
-        mClient.sendCommand(command + "[" + value + "]");
-    }
-
-    public void sendStopCommand() {
-        mClient.sendCommand(ACTION_STOP);
-    }
-
-    public void sendCenterCommand() {
-        mClient.sendCommand(ACTION_CENTER);
+        mClient.sendCommand(command, value);
     }
 }
