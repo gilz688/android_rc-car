@@ -1,10 +1,14 @@
 package ph.edu.msuiit.rccarserver.commands;
 
+import com.google.gson.annotations.Expose;
+
 import java.io.IOException;
 
 public class RCCarCommand implements Command{
     private String command;
-    RCCar car;
+
+    @Expose(serialize = false)
+    private RCCar car;
 
     public RCCarCommand(RCCar car, String command){
         this.command = command;
@@ -18,5 +22,9 @@ public class RCCarCommand implements Command{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getCommand() {
+        return command;
     }
 }
