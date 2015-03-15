@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class RCCommand {
 	private String cmd;
-	private Map<String,String> data;
+	private Map<String,Object> data;
 	
 	public String getCommand() {
 		return cmd;
@@ -25,11 +25,11 @@ public class RCCommand {
 		this.cmd = command;
 	}
 	
-	public void putData(String key, String value) {
+	public void putData(String key, Object value) {
 		data.put(key,value);
 	}
 
-    public String getData(String key) {
+    public Object getData(String key) {
         return data.get(key);
     }
 

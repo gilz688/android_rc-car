@@ -32,8 +32,11 @@ public class TCPDataReceiver implements TCPServer.TCPServerListener{
             switch (cmd.toLowerCase()){
                 case "move":
                 case "steer":
+                    Double param = (Double) command.getData("param");
+                    System.out.println(param.getClass().getName());
+                    int value = param.intValue();
                     try {
-                        mCar.send(line);
+                        mCar.send(cmd + " " + value);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

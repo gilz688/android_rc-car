@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class RCResponse {
 	private String request;
-	private Map<String,String> data;
+	private Map<String,Object> data;
 
 	public String getCommand() {
 		return request;
@@ -25,11 +25,11 @@ public class RCResponse {
 		this.request = response;
 	}
 	
-	public void putData(String key, String value) {
+	public void putData(String key, Object value) {
 		data.put(key,value);
 	}
 
-    public String getData(String key) {
+    public Object getData(String key) {
         return data.get(key);
     }
 
@@ -37,7 +37,6 @@ public class RCResponse {
         Gson gson = new GsonBuilder()
                 .disableHtmlEscaping()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .setPrettyPrinting()
                 .create();
 
         return gson.toJson(this,RCResponse.class);
