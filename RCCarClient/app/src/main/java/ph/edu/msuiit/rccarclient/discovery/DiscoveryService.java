@@ -36,7 +36,7 @@ public class DiscoveryService extends IntentService{
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        int discoveryPort = intent.getIntExtra(PARAM_DISCOVERY_PORT, DiscoveryClient.DEFAULT_PORT);
+        int discoveryClientPort = intent.getIntExtra(PARAM_DISCOVERY_PORT, DiscoveryClient.DEFAULT_PORT);
         int timeout = intent.getIntExtra(PARAM_TIMEOUT, DiscoveryClient.DEFAULT_TIMEOUT);
         String action = intent.getAction();
         switch(action){
@@ -57,7 +57,7 @@ public class DiscoveryService extends IntentService{
                         sendMessage(ACTION_DISCOVERY_CLIENT_STARTED);
                         DiscoveryClient client = new DiscoveryClient(getBroadcastAddress(wifiManager));
                         client.setTimeout(timeout);
-                        client.setDiscoveryPort(discoveryPort);
+                        client.setDiscoveryClientPort(discoveryClientPort);
                         client.setOnServerFoundListener(new DiscoveryClient.OnServerFoundListener() {
                             @Override
                             public void onServerFound(String serverName, InetAddress serverAddress, int serverPort) {

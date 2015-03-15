@@ -2,12 +2,17 @@ package ph.edu.msuiit.rccarclient.models;
 
 import android.util.Log;
 
+import com.google.gson.JsonSyntaxException;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
+
+import ph.edu.msuiit.rccarclient.common.RCCommand;
+import ph.edu.msuiit.rccarclient.common.RCResponse;
 
 public class DiscoveryClient{
     private static final String TAG = "DiscoveryClient";
@@ -17,16 +22,18 @@ public class DiscoveryClient{
     private OnServerFoundListener mListener;
     private InetAddress broadcastAddress;
     private int timeout;
-    private int discoveryPort;
+    private int discoveryServerPort;
+    private int discoveryClientPort;
 
     public DiscoveryClient(InetAddress broadcastAddress){
         this.broadcastAddress = broadcastAddress;
         this.timeout = DEFAULT_TIMEOUT;
-        this.discoveryPort = DEFAULT_PORT;
+        this.discoveryClientPort = DEFAULT_PORT;
+        this.discoveryServerPort = DEFAULT_PORT;
     }
 
-    public void setOnServerFoundListener(OnServerFoundListener mListener) {
-        this.mListener = mListener;
+    public void setOnServerFoundListener(OnServerFoundListener onServerFoundListener) {
+        this.mListener = onServerFoundListener;
     }
 
     /**
@@ -39,7 +46,7 @@ public class DiscoveryClient{
         socket.setReuseAddress(true);
         socket.setBroadcast(true);
         socket.setSoTimeout(timeout);
-        socket.bind(new InetSocketAddress(discoveryPort));
+        socket.bind(new InetSocketAddress(discoveryClientPort));
         sendDiscoveryRequest(socket);
         listenForResponses(socket);
         socket.close();
@@ -54,13 +61,25 @@ public class DiscoveryClient{
      */
     public void listenForResponses(DatagramSocket socket) throws IOException {
         byte[] buf = new byte[1024];
+
         try {
             while (!Thread.interrupted()) {
                 final DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 socket.receive(packet);
                 final String s = new String(packet.getData(), 0, packet.getLength());
-                if(!s.equals("discover"))
-                    mListener.onServerFound(s, packet.getAddress(), packet.getPort());
+
+                try {
+                    RCResponse response = RCResponse.newInstanceFromJson(s);
+                    String command = response.getCommand();
+                    if( command != null && command.equalsIgnoreCase("discover")) {
+                        String deviceName = (String) response.getData("device_name");
+                        if(deviceName != null)
+                            mListener.onServerFound(deviceName, packet.getAddress(), packet.getPort());
+                    }
+
+                } catch(JsonSyntaxException e){
+                    Log.e(TAG, e.getMessage());
+                }
 
                 Log.d(TAG, "Received response " + s);
                 Log.d(TAG, "Source: " + packet.getAddress()+':'+packet.getPort());
@@ -77,15 +96,22 @@ public class DiscoveryClient{
      * @throws IOException
      */
     public void sendDiscoveryRequest(DatagramSocket socket) throws IOException {
-        String data = "discover";
+        RCCommand discoveryCommand = new RCCommand("discover");
+        String data = discoveryCommand.getJson();
+
         DatagramPacket packet = new DatagramPacket(data.getBytes(), data.length(),
-                broadcastAddress, discoveryPort);
+                broadcastAddress, discoveryServerPort);
         socket.send(packet);
     }
 
-    public void setDiscoveryPort(int discoveryPort) {
-        this.discoveryPort = discoveryPort;
+    public void setDiscoveryClientPort(int discoveryPort) {
+        this.discoveryClientPort = discoveryPort;
     }
+
+    public void setDiscoveryServerPort(int discoveryPort) {
+        this.discoveryServerPort = discoveryPort;
+    }
+
 
     public void setTimeout(int timeout) {
         this.timeout = timeout;

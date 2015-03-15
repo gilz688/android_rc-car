@@ -17,8 +17,6 @@ public class TCPService extends Service {
 
     public static final String ACTION_MOVE = "move";
     public static final String ACTION_STEER = "steer";
-    public static final String ACTION_STOP = "stop";
-    public static final String ACTION_CENTER = "center";
 
     public class TCPServiceBinder extends Binder {
         public TCPService getService() {

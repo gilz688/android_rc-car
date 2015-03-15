@@ -10,14 +10,12 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.Set;
 
 import ph.edu.msuiit.rccarserver.R;
 import ph.edu.msuiit.rccarserver.ServerActivity;
-import ph.edu.msuiit.rccarserver.commands.RCCar;
 import tw.com.prolific.driver.pl2303.PL2303Driver;
 
 public class RCCarService extends Service {

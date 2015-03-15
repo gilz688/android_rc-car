@@ -2,6 +2,8 @@ package ph.edu.msuiit.rccarclient.models;
 
 import android.util.Log;
 
+import com.google.gson.JsonSyntaxException;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -12,6 +14,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import ph.edu.msuiit.rccarclient.common.RCCommand;
 
 
 public class TCPClient extends Thread {
@@ -71,12 +75,12 @@ public class TCPClient extends Thread {
         executor.shutdownNow();
         try {
             connectionSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            this.interrupt();
-        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    } finally {
+        this.interrupt();
     }
+}
 
     public void sendCommand(String command, int value) {
         CommandSender cs = new CommandSender(command, value);
@@ -107,12 +111,15 @@ public class TCPClient extends Thread {
             OutputStream os;
             PrintStream ps;
             try {
-                String finalCommand = command + " [" + value + "]";
+                RCCommand rcCommand = new RCCommand(command);
+                rcCommand.putData("param", value);
                 os = connectionSocket.getOutputStream();
                 ps = new PrintStream(os);
-                ps.println(finalCommand);
+                ps.println(rcCommand.getJson());
                 Log.d(TAG, "Command sent: " +command);
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JsonSyntaxException e){
                 e.printStackTrace();
             }
         }

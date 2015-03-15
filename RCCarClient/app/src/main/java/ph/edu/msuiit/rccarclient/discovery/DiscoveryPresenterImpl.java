@@ -31,6 +31,7 @@ public class DiscoveryPresenterImpl implements DiscoveryPresenter {
     public void onDeviceFound(String serverName, InetAddress serverAddress, int serverPort) {
         Device device = new Device(serverName, serverAddress, serverPort);
         mView.addDevice(device);
+        mView.hideProgress();
     }
 
     @Override
