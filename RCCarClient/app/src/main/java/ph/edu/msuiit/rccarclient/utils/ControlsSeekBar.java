@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.SeekBar;
 
 public class ControlsSeekBar extends SeekBar {
@@ -69,6 +70,25 @@ public class ControlsSeekBar extends SeekBar {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 if (onChangeListener != null)
                     onChangeListener.onStopTrackingTouch(seekBar);
+            }
+        });
+    }
+
+    public void enableTouchEvent() {
+        setProgressValue(0);
+        super.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
+    }
+    public void disableTouchEvent() {
+        setProgressValue(0);
+        super.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
             }
         });
     }
