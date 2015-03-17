@@ -30,13 +30,19 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
     private ControlsSeekBar verticalSeekBar;
     private ControlsSeekBar horizontalSeekBar;
     private SensorManager mSensorManager;
-    private Sensor mAccelerometer;
-    private int accelerometerValue = 0;
+    private Sensor mAccelerometer, mMagnetometer;
+
+    float matrixR[] = null; //for gravity rotational data
+    float matrixI[] = null; //for magnetic rotational data
+    float accelerometerValues[] = new float[3];
+    float magnetometerValues[] = new float[3];
+    float[] angle = new float[3];
 
     private static final int MAXIMUM_SPEED = 255;
     private static final int MINIMUM_SPEED = -255;
     private static final int MAXIMUM_ANGLE = 70;
     private static final int MINIMUM_ANGLE = -70;
+
 
     public static ControlsFragment newInstance(ParcelableDevice device) {
         ControlsFragment fragment = new ControlsFragment();
@@ -94,15 +100,15 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
         return root;
     }
     private void enableAccelerometer() {
-        accelerometerValue = 0;
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mMagnetometer,SensorManager.SENSOR_DELAY_NORMAL);
         horizontalSeekBar.disableTouchEvent();
     }
 
     private void disableAccelerometer() {
-        accelerometerValue = 0;
         mSensorManager.unregisterListener(this);
         horizontalSeekBar.enableTouchEvent();
     }
@@ -113,24 +119,50 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float yRaw;
-        Sensor sensor = event.sensor;
-        if(sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            WindowManager windowMgr = (WindowManager)getActivity().getSystemService(Context.WINDOW_SERVICE);
-            int rotationIndex = windowMgr.getDefaultDisplay().getRotation();
-            if (rotationIndex == 1 || rotationIndex == 3) { // detect 90 or 270 degree rotation
-                yRaw = event.values[1];
-            }
-            else {
-                yRaw = event.values[0];
-            }
-            accelerometerValue = accelerometerValue + Math.round(yRaw);
-            if (accelerometerValue>MAXIMUM_ANGLE)
-                accelerometerValue = MAXIMUM_ANGLE;
-            if (accelerometerValue<MINIMUM_SPEED)
-                accelerometerValue = MINIMUM_SPEED;
-            horizontalSeekBar.setProgressValue(accelerometerValue);
+        switch (event.sensor.getType())
+        {
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                magnetometerValues = lowPass(event.values.clone(), magnetometerValues);
+                break;
+            case Sensor.TYPE_ACCELEROMETER:
+                accelerometerValues = lowPass(event.values.clone(), magnetometerValues);
+                break;
         }
+
+        if (magnetometerValues != null && accelerometerValues != null) {
+            matrixR = new float[9];
+            matrixI = new float[9];
+
+            SensorManager.getRotationMatrix(matrixR, matrixI, accelerometerValues, magnetometerValues);
+
+            float[] outR = new float[9];
+            SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_X,SensorManager.AXIS_MINUS_Y, outR);
+            SensorManager.getOrientation(outR, angle);
+
+            float pitch = angle[1] * 57.2957795f;
+
+            magnetometerValues = null; // retrigger the loop when things are repopulated
+            accelerometerValues = null; // retrigger the loop when things are repopulated
+
+            int value = Math.round(pitch);
+            value = map(value, -30 , 30, -70, 70);
+
+            horizontalSeekBar.setProgressValue(value);
+        }
+    }
+
+    private int map(int value, int in_min, int in_max, int out_min, int out_max){
+        return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    }
+
+    final float ALPHA = 0.5f;
+
+    protected float[] lowPass( float[] input, float[] output ) {
+        if ( output == null ) return input;
+        for ( int i=0; i<input.length; i++ ) {
+            output[i] = output[i] + ALPHA * (input[i] - output[i]);
+        }
+        return output;
     }
 
 
@@ -144,7 +176,6 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
     public void onPause() {
         super.onPause();
         mPresenter.onEnd();
-        accelerometerValue = 0;
         disableAccelerometer();
     }
 
