@@ -70,6 +70,7 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_controls,
                 null);
 
+        root.setBackgroundColor(getResources().getColor(R.color.background));
 
         verticalSeekBar = (ControlsSeekBar) root.findViewById(R.id.vertical_seek_bar);
         verticalSeekBar.setMaxValue(MAXIMUM_SPEED);
@@ -117,7 +118,8 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
     }
 
     private void disableAccelerometer() {
-        mSensorManager.unregisterListener(this);
+        if(mSensorManager != null)
+            mSensorManager.unregisterListener(this);
         horizontalSeekBar.enableTouchEvent();
     }
 

@@ -10,5 +10,4 @@ public interface ControlsPresenter {
     public void onHSeekBarProgressChanged(int value);
 
     public void onHornButtonClick();
-
 }

@@ -4,6 +4,7 @@
     <color name="primary_light">#ff7043</color>
     <color name="primary">#FF5722</color>
     <color name="accent">#81C784</color >
+    <color name="background">#EEEEEE</color >
 
     <integer-array name="progressbar_colors">
         <item>@color/primary_light</item>

@@ -74,7 +74,8 @@ public class TCPClient extends Thread {
         isRunning = false;
         executor.shutdownNow();
         try {
-            connectionSocket.close();
+            if(connectionSocket != null)
+                connectionSocket.close();
     } catch (IOException e) {
         e.printStackTrace();
     } finally {
