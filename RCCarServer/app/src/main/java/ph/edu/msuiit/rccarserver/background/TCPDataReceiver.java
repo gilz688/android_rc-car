@@ -22,18 +22,18 @@ public class TCPDataReceiver implements TCPServer.TCPServerListener{
 
         try {
             RCCommand command = RCCommand.newInstanceFromJson(line.trim());
-            if(command != null)
+            if(command == null)
                 return;
 
             String cmd = command.getCommand();
             if (cmd == null)
                 return;
 
+            Log.d(TAG,"cmd: " + cmd);
             switch (cmd.toLowerCase()){
                 case "move":
                 case "steer":
                     Double param = (Double) command.getData("param");
-                    System.out.println(param.getClass().getName());
                     int value = param.intValue();
                     try {
                         mCar.send(cmd + " " + value);
