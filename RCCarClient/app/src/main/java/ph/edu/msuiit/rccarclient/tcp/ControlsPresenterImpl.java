@@ -36,6 +36,10 @@ public class ControlsPresenterImpl implements ControlsPresenter{
         mInteractor.steer(value);
     }
 
+    @Override
+    public void onHornButtonClick() {
+        mInteractor.sendHornCommand();
+    }
 
 
 }

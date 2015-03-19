@@ -1,9 +1,22 @@
 #include <Servo.h>
+#include <NewPing.h>
 
 // declaration of pins
 int const servoPin = 3;
 int const mainMotorDirPin = 4;
 int const mainMotorPWMPin = 5;
+
+int direction = 1;
+int pwm = 0;
+
+// ultrasonic senser
+const int triggerPin = 6;
+const int echoPin = 7;
+const int maxDistance = 30;
+
+NewPing sonar(triggerPin, echoPin, maxDistance);
+unsigned int pingSpeed = 20;
+unsigned long pingTimer;
 
 String inputString = ""; 
 boolean stringComplete = false;
@@ -25,6 +38,9 @@ void setup() {
   // 45 to 135
   steeringServo.attach(servoPin);
   steeringServo.write(90);
+  
+  // setup ultrasonic sensor
+  pingTimer = millis();
 }
 
 void loop() {
@@ -35,6 +51,36 @@ void loop() {
     
     inputString = "";
     stringComplete = false;
+  }
+ 
+  if (millis() >= pingTimer) {   // pingSpeed milliseconds since last ping, do another ping.
+    pingTimer += pingSpeed;      // Set the next ping time.
+    sonar.ping_timer(updateDistance);
+  }
+}
+
+void updateDistance(){
+    if (sonar.check_timer()) {
+      float distance = sonar.ping_result / US_ROUNDTRIP_CM;
+      if(distance < 10 ){
+        brake();
+      } else if(distance < 100 && pwm > 150){
+        pwm = 150;
+      }
+  }
+}
+
+void brake(){
+  if(pwm == 0)
+    return;
+    
+  if(direction == 1){
+    digitalWrite(mainMotorDirPin, 0);
+    analogWrite(mainMotorPWMPin, 255);
+    delay(1000);
+    analogWrite(mainMotorPWMPin, 0);
+    pwm = 0;
+    Serial.println("brake");
   }
 }
 
@@ -82,21 +128,29 @@ void sendInvalid(){
 }
 
 /*
-  0 = stop, 255 = max speed
+  0 = stop, 100 = max speed
 */
 void moveMainMotor(int speed){
-  int direction = 1;
   digitalWrite(13, HIGH);
   if(speed < 0){
     direction = 0;
     speed = -speed;
+  } else{
+    direction = 1;
   }
+  
+  if(speed == 0){
+    pwm = 0;
+  } else{
+    pwm = map(speed, 1, 100, 150, 255);
+  }
+  
   digitalWrite(mainMotorDirPin, direction);
-  analogWrite(mainMotorPWMPin, speed);
+  analogWrite(mainMotorPWMPin, pwm);
 }
 
 void moveSteeringMotor(int angle){
-  steeringServo.write(90 - angle);
+  steeringServo.write(90 + angle);
 }
 
 /*

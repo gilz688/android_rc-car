@@ -44,7 +44,7 @@ public class RCCarService extends Service {
             dThread = new DiscoveryServer("DiscoveryServer");
             dThread.start();
 
-            mListener = new TCPDataReceiver(car);
+            mListener = new TCPDataReceiver(this,car);
             mServer = new TCPServer();
             mServer.setTCPServerListener(mListener);
             mServer.startServer();

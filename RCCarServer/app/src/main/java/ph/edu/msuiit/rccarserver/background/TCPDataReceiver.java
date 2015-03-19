@@ -1,19 +1,24 @@
 package ph.edu.msuiit.rccarserver.background;
 
+import android.content.Context;
+import android.media.MediaPlayer;
 import android.util.Log;
 
 import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 
+import ph.edu.msuiit.rccarserver.R;
 import ph.edu.msuiit.rccarserver.common.RCCommand;
 
 public class TCPDataReceiver implements TCPServer.TCPServerListener{
     private static final String TAG = "TCPDataReceiver";
+    private final MediaPlayer mp;
     private RCCar mCar;
 
-    public TCPDataReceiver(RCCar car){
+    public TCPDataReceiver(Context context, RCCar car){
         mCar = car;
+        mp = MediaPlayer.create(context, R.raw.car_horn);
     }
 
     @Override
@@ -41,7 +46,8 @@ public class TCPDataReceiver implements TCPServer.TCPServerListener{
                         e.printStackTrace();
                     }
                     break;
-                case "get_location":
+                case "horn":
+                    mp.start();
                     break;
                 default:
             }

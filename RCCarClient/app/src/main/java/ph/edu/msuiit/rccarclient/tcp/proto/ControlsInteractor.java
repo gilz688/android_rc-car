@@ -16,4 +16,6 @@ public interface ControlsInteractor {
      *  angle (-60 to 60)
      */
     public void steer(int angle);
+
+    public void sendHornCommand();
 }

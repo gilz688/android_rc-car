@@ -28,16 +28,36 @@
         />
 
 
-    <ToggleButton
-        android:id="@+id/toggle_accelerometer"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:textOff="@string/toggle_accelerometer_off"
-        android:textOn="@string/toggle_accelerometer_on"
-        android:textSize="@dimen/abc_text_size_medium_material"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:textColor="@android:color/white"
-        android:background="@drawable/material_button"
-        />
+        android:layout_alignParentBottom="true">
+
+        <ToggleButton
+            android:id="@+id/toggle_accelerometer"
+            android:layout_width="wrap_content"
+            android:textOff="@string/toggle_accelerometer_off"
+            android:textOn="@string/toggle_accelerometer_on"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:background="@drawable/material_button"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/vertical_seek_bar"
+            android:layout_toStartOf="@+id/vertical_seek_bar" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Horn"
+            android:id="@+id/button_horn"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/toggle_accelerometer"
+            android:layout_toEndOf="@+id/toggle_accelerometer"
+            android:background="@drawable/material_button"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/abc_text_size_medium_material" />
+    </LinearLayout>
 </RelativeLayout>

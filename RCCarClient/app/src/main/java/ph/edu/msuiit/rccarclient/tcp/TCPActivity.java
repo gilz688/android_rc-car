@@ -13,7 +13,7 @@ public class TCPActivity extends ActionBarActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_client);
+        setContentView(R.layout.activity_tcp);
         KitKatTweaks.enableStatusBarTint(this);
         Log.d(TAG, "TCPActivity Started.");
 
@@ -22,4 +22,6 @@ public class TCPActivity extends ActionBarActivity{
                 .add(R.id.container, ControlsFragment.newInstance(device))
                 .commit();
     }
+
+
 }

@@ -12,6 +12,7 @@ import ph.edu.msuiit.rccarclient.models.TCPClient;
 
 public class TCPService extends Service {
     private static final String TAG = "TCPService";
+    public static final String ACTION_HORN = "horn";
     private final IBinder mBinder = new TCPServiceBinder();
     private TCPClient mClient;
 
@@ -44,4 +45,6 @@ public class TCPService extends Service {
     public void sendCommand(String command, int value) {
         mClient.sendCommand(command, value);
     }
+
+    public void sendCommand(String command) { mClient.sendCommand(command); }
 }

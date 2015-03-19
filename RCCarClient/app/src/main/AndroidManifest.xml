@@ -29,7 +29,6 @@
             android:screenOrientation="landscape" >
         </activity>
 
-
         <service android:name=".discovery.DiscoveryService" />
         <service android:name=".tcp.TCPService" />
 

@@ -98,21 +98,46 @@ public class TCPClient extends Thread {
         }
     }
 
+    public void sendCommand(String command) {
+        CommandSender cs = new CommandSender(command);
+        Future<?> future = executor.submit(cs);
+        try {
+            if (future.get() == null) {
+                Log.d(TAG, "Runnable is terminated after execution");
+            } else {
+                Log.d(TAG, "Runnable is still running after execution");
+            }
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     class CommandSender implements Runnable {
         private String command;
         private int value;
+        private boolean hasParameter;
 
         CommandSender (String command, int value) {
             this.command = command;
             this.value = value;
+            this.hasParameter = true;
         }
+
+        public CommandSender(String command) {
+            this.command = command;
+            this.hasParameter = false;
+        }
+
         @Override
         public void run() {
             OutputStream os;
             PrintStream ps;
             try {
                 RCCommand rcCommand = new RCCommand(command);
-                rcCommand.putData("param", value);
+                if(hasParameter)
+                    rcCommand.putData("param", value);
                 os = connectionSocket.getOutputStream();
                 ps = new PrintStream(os);
                 ps.println(rcCommand.getJson());

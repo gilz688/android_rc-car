@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.ToggleButton;
@@ -38,10 +39,10 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
     float magnetometerValues[] = new float[3];
     float[] angle = new float[3];
 
-    private static final int MAXIMUM_SPEED = 255;
-    private static final int MINIMUM_SPEED = -255;
-    private static final int MAXIMUM_ANGLE = 70;
-    private static final int MINIMUM_ANGLE = -70;
+    private static final int MAXIMUM_SPEED = 100;
+    private static final int MINIMUM_SPEED = -100;
+    private static final int MAXIMUM_ANGLE = 80;
+    private static final int MINIMUM_ANGLE = -80;
 
 
     public static ControlsFragment newInstance(ParcelableDevice device) {
@@ -97,6 +98,13 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
         mPresenter = new ControlsPresenterImpl(this, new ControlsInteractorImpl(getActivity()));
         mPresenter.onStart(device);
 
+        ((Button) root.findViewById(R.id.button_horn)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.onHornButtonClick();
+            }
+        });
+
         return root;
     }
     private void enableAccelerometer() {
@@ -144,15 +152,14 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
             magnetometerValues = null; // retrigger the loop when things are repopulated
             accelerometerValues = null; // retrigger the loop when things are repopulated
 
-            int value = Math.round(pitch);
-            value = map(value, -30 , 30, -70, 70);
+            int value = map(pitch, -30 , 30, -80, 80);
 
             horizontalSeekBar.setProgressValue(value);
         }
     }
 
-    private int map(int value, int in_min, int in_max, int out_min, int out_max){
-        return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    private int map(float value, float in_min, float in_max, float out_min, float out_max){
+        return Math.round((value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
     }
 
     final float ALPHA = 0.5f;
