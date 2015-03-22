@@ -9,5 +9,6 @@ public interface ControlsPresenter {
     public void onVSeekBarProgressChanged(int value);
     public void onHSeekBarProgressChanged(int value);
 
-    public void onHornButtonClick();
+    public void onHornButtonTouched();
+    public void onHornButtonReleased();
 }

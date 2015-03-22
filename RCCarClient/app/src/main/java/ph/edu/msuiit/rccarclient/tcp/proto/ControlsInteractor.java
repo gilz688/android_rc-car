@@ -18,4 +18,5 @@ public interface ControlsInteractor {
     public void steer(int angle);
 
     public void sendHornCommand();
+    public void sendStopHornCommand();
 }

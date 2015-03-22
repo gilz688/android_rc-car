@@ -9,9 +9,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
@@ -99,10 +99,19 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
         mPresenter = new ControlsPresenterImpl(this, new ControlsInteractorImpl(getActivity()));
         mPresenter.onStart(device);
 
-        ((Button) root.findViewById(R.id.button_horn)).setOnClickListener(new View.OnClickListener() {
+        Button btnHorn = (Button) root.findViewById(R.id.button_horn);
+        btnHorn.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                mPresenter.onHornButtonClick();
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        mPresenter.onHornButtonTouched();
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        mPresenter.onHornButtonReleased();
+                        return true;
+                }
+                return false;
             }
         });
 

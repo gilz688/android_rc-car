@@ -37,8 +37,13 @@ public class ControlsPresenterImpl implements ControlsPresenter{
     }
 
     @Override
-    public void onHornButtonClick() {
+    public void onHornButtonTouched() {
         mInteractor.sendHornCommand();
+    }
+
+    @Override
+    public void onHornButtonReleased() {
+        mInteractor.sendStopHornCommand();
     }
 
 

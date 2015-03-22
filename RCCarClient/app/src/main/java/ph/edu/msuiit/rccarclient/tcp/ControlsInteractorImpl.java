@@ -48,6 +48,11 @@ public class ControlsInteractorImpl implements ControlsInteractor {
         mBoundService.sendCommand(TCPService.ACTION_HORN);
     }
 
+    @Override
+    public void sendStopHornCommand() {
+        mBoundService.sendCommand(TCPService.ACTION_STOP_HORN);
+    }
+
 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
