@@ -47,8 +47,10 @@ public class DiscoveryClient{
         socket.setBroadcast(true);
         socket.setSoTimeout(timeout);
         socket.bind(new InetSocketAddress(discoveryClientPort));
-        sendDiscoveryRequest(socket);
-        listenForResponses(socket);
+        int i = 0;
+        do{
+            sendDiscoveryRequest(socket);
+        } while (!listenForResponses(socket) && i++ < 3);
         socket.close();
     }
 
@@ -59,7 +61,8 @@ public class DiscoveryClient{
      *          socket on which the announcement request was sent
      * @throws java.io.IOException
      */
-    public void listenForResponses(DatagramSocket socket) throws IOException {
+    public boolean listenForResponses(DatagramSocket socket) throws IOException {
+        boolean found = false;
         byte[] buf = new byte[1024];
 
         try {
@@ -73,8 +76,10 @@ public class DiscoveryClient{
                     String command = response.getCommand();
                     if( command != null && command.equalsIgnoreCase("discover")) {
                         String deviceName = (String) response.getData("device_name");
-                        if(deviceName != null)
+                        if(deviceName != null) {
+                            found = true;
                             mListener.onServerFound(deviceName, packet.getAddress(), packet.getPort());
+                        }
                     }
 
                 } catch(JsonSyntaxException e){
@@ -87,6 +92,7 @@ public class DiscoveryClient{
         } catch (SocketTimeoutException e) {
             Log.d(TAG, "Receive timed out");
         }
+        return found;
     }
 
     /**

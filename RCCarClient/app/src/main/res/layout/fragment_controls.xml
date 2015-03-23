@@ -3,37 +3,73 @@
     android:layout_height="match_parent"
     tools:context="ph.edu.msuiit.rccarclient.tcp.ControlsFragment">
 
-    <ph.edu.msuiit.rccarclient.utils.ControlsSeekBar
-        android:id="@+id/horizontal_seek_bar"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="70dp"
-        android:progress="0"
-        android:progressDrawable="@drawable/progress"
-        android:thumb="@drawable/ic_launcher"
-        />
-
-    <ph.edu.msuiit.rccarclient.utils.ControlsSeekBar
-        android:id="@+id/vertical_seek_bar"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:progress="0"
-        android:progressDrawable="@drawable/progress"
-        android:thumb="@drawable/ic_launcher"
-        android:rotation="270"
-        />
-
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:weightSum="10"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false"
+        android:baselineAligned="false"
+        android:layout_above="@+id/linearLayout2">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:gravity="center"
+            android:paddingLeft="30dp"
+            android:paddingRight="10dp">
+
+            <ph.edu.msuiit.rccarclient.utils.ControlsSeekBar
+                android:id="@+id/horizontal_seek_bar"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:progress="0"
+                android:progressDrawable="@drawable/progress"
+                android:thumb="@drawable/progress_thumb"
+                android:layout_gravity="center_vertical" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/linearLayout"
+            android:layout_weight="5"
+            android:gravity="center_vertical"
+            android:layout_gravity="left"
+            android:padding="20dp">
+
+            <ph.edu.msuiit.rccarclient.utils.ControlsSeekBar
+                android:id="@+id/vertical_seek_bar"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:progress="0"
+                android:progressDrawable="@drawable/progress"
+                android:thumb="@drawable/progress_thumb"
+                android:rotation="270"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_gravity="center_vertical" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true">
+        android:gravity="center_horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/linearLayout2">
 
         <ToggleButton
             android:id="@+id/toggle_accelerometer"
@@ -60,4 +96,5 @@
             android:textColor="@android:color/white"
             android:textSize="@dimen/abc_text_size_medium_material" />
     </LinearLayout>
+
 </RelativeLayout>

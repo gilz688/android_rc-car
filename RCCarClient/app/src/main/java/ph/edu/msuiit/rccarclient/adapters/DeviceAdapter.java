@@ -50,8 +50,11 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
     }
 
     public boolean add(Device device) {
-        boolean result = deviceList.add(device);
-        notifyDataSetChanged();
+        boolean result = false;
+        if (!deviceList.contains(device)){
+            result = deviceList.add(device);
+            notifyDataSetChanged();
+        }
         return result;
     }
 

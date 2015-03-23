@@ -158,8 +158,9 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView, Device
 
     @Override
     public void addDevice(Device device) {
-        if(mAdapter != null)
+        if(mAdapter != null) {
             mAdapter.add(device);
+        }
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import java.net.InetAddress;
 
@@ -14,6 +15,9 @@ public class TCPService extends Service {
     private static final String TAG = "TCPService";
     public static final String ACTION_HORN = "horn";
     public static final String ACTION_STOP_HORN = "stop horn";
+    public static final String ACTION_TCP_CONNECTED = "ACTION_TCP_CONNECTED";
+    public static final String ACTION_TCP_DISCONNECTED = "ACTION_TCP_DISCONNECTED";
+    public static final String ACTION_TCP_RESPONSE = "ACTION_TCP_RESPONSE";
     private final IBinder mBinder = new TCPServiceBinder();
     private TCPClient mClient;
 
@@ -48,4 +52,9 @@ public class TCPService extends Service {
     }
 
     public void sendCommand(String command) { mClient.sendCommand(command); }
+
+    private void sendMessage(String action) {
+        Intent intent = new Intent(action);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+    }
 }

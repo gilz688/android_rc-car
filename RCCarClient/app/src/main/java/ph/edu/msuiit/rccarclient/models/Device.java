@@ -7,6 +7,28 @@ public class Device {
     private InetAddress ipAddress;
     private int port;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Device)) return false;
+
+        Device device = (Device) o;
+
+        if (port != device.port) return false;
+        if (!ipAddress.equals(device.ipAddress)) return false;
+        if (!name.equals(device.name)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + ipAddress.hashCode();
+        result = 31 * result + port;
+        return result;
+    }
+
     public Device(String name, InetAddress ipAddress, int port) {
         this.name = name;
         this.ipAddress = ipAddress;

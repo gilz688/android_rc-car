@@ -62,6 +62,7 @@ void loop() {
 void updateDistance(){
     if (sonar.check_timer()) {
       float distance = sonar.ping_result / US_ROUNDTRIP_CM;
+      Serial.println(distance);
       if(distance < 10 ){
         brake();
       } else if(distance < 100 && pwm > 150){

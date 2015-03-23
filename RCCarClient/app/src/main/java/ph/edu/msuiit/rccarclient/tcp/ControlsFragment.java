@@ -1,6 +1,8 @@
 package ph.edu.msuiit.rccarclient.tcp;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -8,6 +10,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,6 +21,8 @@ import android.widget.SeekBar;
 import android.widget.ToggleButton;
 
 import ph.edu.msuiit.rccarclient.R;
+import ph.edu.msuiit.rccarclient.discovery.DiscoveryBroadcastReceiver;
+import ph.edu.msuiit.rccarclient.discovery.DiscoveryService;
 import ph.edu.msuiit.rccarclient.models.ParcelableDevice;
 import ph.edu.msuiit.rccarclient.tcp.proto.ControlsPresenter;
 import ph.edu.msuiit.rccarclient.tcp.proto.ControlsView;
@@ -44,6 +49,8 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
     private static final int MAXIMUM_ANGLE = 80;
     private static final int MINIMUM_ANGLE = -80;
 
+    // handler for received Intents for the "tcp" event
+    BroadcastReceiver mMessageReceiver;
 
     public static ControlsFragment newInstance(ParcelableDevice device) {
         ControlsFragment fragment = new ControlsFragment();
@@ -69,7 +76,7 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_controls,
                 null);
-
+        mMessageReceiver = new TCPBroadcastReceiver(mPresenter);
         root.setBackgroundColor(getResources().getColor(R.color.background));
 
         verticalSeekBar = (ControlsSeekBar) root.findViewById(R.id.vertical_seek_bar);
@@ -83,7 +90,6 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
         horizontalSeekBar.setMinValue(MINIMUM_ANGLE);
         horizontalSeekBar.setProgressValue(0);
         horizontalSeekBar.setOnSeekBarChangeListener(this);
-
 
         ToggleButton toggleAccelerometer = (ToggleButton) root.findViewById(R.id.toggle_accelerometer);
         toggleAccelerometer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -103,7 +109,7 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
         btnHorn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         mPresenter.onHornButtonTouched();
                         return true;
@@ -183,18 +189,32 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
         return output;
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
+        registerReceivers();
         mPresenter.onStart(device);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        unRegisterReceivers();
         mPresenter.onEnd();
         disableAccelerometer();
+    }
+
+    public void registerReceivers(){
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(TCPService.ACTION_TCP_CONNECTED);
+        filter.addAction(TCPService.ACTION_TCP_DISCONNECTED);
+        filter.addAction(TCPService.ACTION_TCP_RESPONSE);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver,
+                filter);
+    }
+
+    public void unRegisterReceivers() {
+        LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).unregisterReceiver(mMessageReceiver);
     }
 
     @Override
@@ -227,5 +247,10 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
                 horizontalSeekBar.setProgressValue(0);
                 break;
         }
+    }
+
+    @Override
+    public void closeView() {
+        getActivity().finish();
     }
 }

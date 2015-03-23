@@ -1,5 +1,6 @@
 package ph.edu.msuiit.rccarclient.tcp;
 
+import ph.edu.msuiit.rccarclient.common.RCResponse;
 import ph.edu.msuiit.rccarclient.models.Device;
 import ph.edu.msuiit.rccarclient.tcp.proto.ControlsInteractor;
 import ph.edu.msuiit.rccarclient.tcp.proto.ControlsPresenter;
@@ -46,5 +47,18 @@ public class ControlsPresenterImpl implements ControlsPresenter{
         mInteractor.sendStopHornCommand();
     }
 
+    @Override
+    public void tcpConnected() {
 
+    }
+
+    @Override
+    public void tcpDisconnected() {
+        mView.closeView();
+    }
+
+    @Override
+    public void tcpResponseReceived(RCResponse response) {
+
+    }
 }

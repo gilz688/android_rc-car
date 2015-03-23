@@ -15,7 +15,7 @@ public class DiscoveryBroadcastReceiver extends BroadcastReceiver {
     public static final String EXTRA_SERVER_NAME = "serverName";
     public static final String EXTRA_SERVER_ADDRESS = "serverAddress";
     public static final String EXTRA_SERVER_PORT = "serverPort";
-    private static final String TAG = "DiscoveryBroadcastReceiver";
+    private static final String TAG = "DBroadcastReceiver";
     private DiscoveryPresenter mPresenter;
 
     public DiscoveryBroadcastReceiver(DiscoveryPresenter presenter){
