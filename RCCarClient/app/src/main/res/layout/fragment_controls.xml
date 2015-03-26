@@ -3,7 +3,6 @@
     android:layout_height="match_parent"
     tools:context="ph.edu.msuiit.rccarclient.tcp.ControlsFragment">
 
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
@@ -79,7 +78,7 @@
             android:textSize="@dimen/abc_text_size_medium_material"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
-            android:background="@drawable/material_button"
+            android:background="@drawable/material_toggle_button"
             android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@+id/vertical_seek_bar"
             android:layout_toStartOf="@+id/vertical_seek_bar" />

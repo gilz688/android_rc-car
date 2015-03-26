@@ -44,10 +44,10 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
     float magnetometerValues[] = new float[3];
     float[] angle = new float[3];
 
-    private static final int MAXIMUM_SPEED = 100;
-    private static final int MINIMUM_SPEED = -100;
-    private static final int MAXIMUM_ANGLE = 80;
-    private static final int MINIMUM_ANGLE = -80;
+    private static final int MAXIMUM_SPEED = 3;
+    private static final int MINIMUM_SPEED = -3;
+    private static final int MAXIMUM_ANGLE = 3;
+    private static final int MINIMUM_ANGLE = -3;
 
     // handler for received Intents for the "tcp" event
     BroadcastReceiver mMessageReceiver;
@@ -169,13 +169,13 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
             magnetometerValues = null; // retrigger the loop when things are repopulated
             accelerometerValues = null; // retrigger the loop when things are repopulated
 
-            int value = map(pitch, -30 , 30, -80, 80);
+            int value = map(pitch, -20 , 20, MINIMUM_ANGLE, MAXIMUM_ANGLE);
 
             horizontalSeekBar.setProgressValue(value);
         }
     }
 
-    private int map(float value, float in_min, float in_max, float out_min, float out_max){
+    public int map(float value, float in_min, float in_max, float out_min, float out_max){
         return Math.round((value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
     }
 

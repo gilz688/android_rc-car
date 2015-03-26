@@ -9,6 +9,7 @@ import android.util.Log;
 import java.net.InetAddress;
 
 import ph.edu.msuiit.rccarclient.models.Device;
+import ph.edu.msuiit.rccarclient.models.RCClient;
 import ph.edu.msuiit.rccarclient.models.TCPClient;
 
 public class TCPService extends Service {
@@ -19,7 +20,7 @@ public class TCPService extends Service {
     public static final String ACTION_TCP_DISCONNECTED = "ACTION_TCP_DISCONNECTED";
     public static final String ACTION_TCP_RESPONSE = "ACTION_TCP_RESPONSE";
     private final IBinder mBinder = new TCPServiceBinder();
-    private TCPClient mClient;
+    private RCClient mClient;
 
     public static final String ACTION_MOVE = "move";
     public static final String ACTION_STEER = "steer";

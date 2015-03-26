@@ -62,7 +62,7 @@ void loop() {
 void updateDistance(){
     if (sonar.check_timer()) {
       float distance = sonar.ping_result / US_ROUNDTRIP_CM;
-      Serial.println(distance);
+      // Serial.println(distance);
       if(distance < 10 ){
         brake();
       } else if(distance < 100 && pwm > 150){
@@ -132,6 +132,9 @@ void sendInvalid(){
   0 = stop, 100 = max speed
 */
 void moveMainMotor(int speed){
+  if (speed > 3)
+    return;
+    
   digitalWrite(13, HIGH);
   if(speed < 0){
     direction = 0;
@@ -143,14 +146,24 @@ void moveMainMotor(int speed){
   if(speed == 0){
     pwm = 0;
   } else{
-    pwm = map(speed, 1, 100, 150, 255);
+    pwm = map(speed, 1, 3, 150, 255);
   }
   
   digitalWrite(mainMotorDirPin, direction);
   analogWrite(mainMotorPWMPin, pwm);
 }
 
-void moveSteeringMotor(int angle){
+const int angles[] = {0, 45, 55, 70};
+void moveSteeringMotor(int param){
+  if(param > 3)
+    return;
+    
+  int angle;
+  if (param < 0)
+    angle = -angles[-param];
+  else
+    angle = angles[param];
+ 
   steeringServo.write(90 + angle);
 }
 

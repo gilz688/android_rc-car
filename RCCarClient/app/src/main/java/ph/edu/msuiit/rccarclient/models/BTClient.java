@@ -1,5 +1,7 @@
 package ph.edu.msuiit.rccarclient.models;
 
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
 import com.google.gson.JsonSyntaxException;
@@ -7,9 +9,7 @@ import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.SocketException;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,29 +17,21 @@ import java.util.concurrent.Future;
 
 import ph.edu.msuiit.rccarclient.common.RCCommand;
 
-
-public class TCPClient extends Thread implements RCClient{
-    private static final String TAG = "TCPClient";
-    public static final int DEFAULT_PORT = 19877;
-
+public class BTClient extends Thread implements RCClient {
+    private static final String TAG = "BTClient";
+    private static final String BLUETOOTH_UUID = "00001101-0000-1000-8000-00805f9b34fb";
+    private BluetoothDevice mDevice;
+    private BluetoothSocket mSocket;
+    private boolean isRunning;
     private ExecutorService executor;
-    private volatile boolean isRunning = false;
 
-    private Socket connectionSocket;
-    private InetAddress serverAddress;
-    private int serverPort;
-
-    public TCPClient(InetAddress serverAddress){
-        this.serverAddress = serverAddress;
-        serverPort = DEFAULT_PORT;
+    public BTClient(BluetoothDevice mDevice) {
+        this.mDevice = mDevice;
+        isRunning = false;
     }
 
-    public TCPClient(InetAddress address, int port) {
-        serverAddress = address;
-        serverPort = port;
-    }
-
-    public synchronized void startClient(){
+    @Override
+    public void startClient() {
         isRunning = true;
         executor = Executors.newSingleThreadExecutor();
         start();
@@ -57,32 +49,17 @@ public class TCPClient extends Thread implements RCClient{
     }
 
     public void connectToDevice() throws IOException {
-        connectionSocket = null;
-        try {
-            connectionSocket = new Socket(serverAddress, serverPort);
-            Log.d(TAG, "Connected to Server. IP: " +connectionSocket.getInetAddress()+ ": " +connectionSocket.getPort());
-        } catch (SocketException e) {
-            Log.e(TAG, e.getMessage());
-        }
+        UUID uuid = UUID.fromString(BLUETOOTH_UUID);
+        mSocket = mDevice.createRfcommSocketToServiceRecord(uuid);
+        mSocket.connect();
     }
 
-    public synchronized boolean isRunning() {
-        return this.isRunning;
+    @Override
+    public void stopClient() {
+        resetConnection();
     }
 
-    public synchronized void stopClient() {
-        isRunning = false;
-        executor.shutdownNow();
-        try {
-            if(connectionSocket != null)
-                connectionSocket.close();
-    } catch (IOException e) {
-        e.printStackTrace();
-    } finally {
-        this.interrupt();
-    }
-}
-
+    @Override
     public void sendCommand(String command, int value) {
         CommandSender cs = new CommandSender(command, value);
         Future<?> future = executor.submit(cs);
@@ -99,6 +76,7 @@ public class TCPClient extends Thread implements RCClient{
         }
     }
 
+    @Override
     public void sendCommand(String command) {
         CommandSender cs = new CommandSender(command);
         Future<?> future = executor.submit(cs);
@@ -112,6 +90,21 @@ public class TCPClient extends Thread implements RCClient{
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    private void resetConnection() {
+        if (mSocket != null) {
+            try {
+                mSocket.close();
+            } catch (Exception e) {
+
+            }
         }
     }
 
@@ -139,7 +132,7 @@ public class TCPClient extends Thread implements RCClient{
                 RCCommand rcCommand = new RCCommand(command);
                 if(hasParameter)
                     rcCommand.putData("param", value);
-                os = connectionSocket.getOutputStream();
+                os = mSocket.getOutputStream();
                 ps = new PrintStream(os);
                 ps.println(rcCommand.getJson());
                 Log.d(TAG, "Command sent: " +command);
