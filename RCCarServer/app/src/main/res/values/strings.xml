@@ -5,9 +5,5 @@
     <string name="wifi_ssid">Wi-Fi Connection:</string>
     <string name="ip_address">IP Address:</string>
     <string name="start_btn">Enable RC Car Server</string>
-    <string name="cancel_btn">Disable RC Car Server</string>
-    <string name="action_refresh">Refresh</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
 
 </resources>

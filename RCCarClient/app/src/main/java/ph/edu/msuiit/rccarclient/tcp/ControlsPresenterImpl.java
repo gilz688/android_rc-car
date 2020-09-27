@@ -6,7 +6,7 @@ import ph.edu.msuiit.rccarclient.tcp.proto.ControlsInteractor;
 import ph.edu.msuiit.rccarclient.tcp.proto.ControlsPresenter;
 import ph.edu.msuiit.rccarclient.tcp.proto.ControlsView;
 
-public class ControlsPresenterImpl implements ControlsPresenter{
+public class ControlsPresenterImpl implements ControlsPresenter {
     private ControlsInteractor mInteractor;
     private ControlsView mView;
 

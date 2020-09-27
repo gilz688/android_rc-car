@@ -1,31 +1,31 @@
 package ph.edu.msuiit.rccarclient.discovery;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import ph.edu.msuiit.rccarclient.R;
-import ph.edu.msuiit.rccarclient.utils.KitKatTweaks;
 
-public class DiscoveryActivity extends ActionBarActivity implements DiscoveryFragment.OnStatusUpdateListener {
+public class DiscoveryActivity extends AppCompatActivity implements DiscoveryFragment.OnStatusUpdateListener {
 
     private static final String TAG = "DiscoveryActivity";
     private static final String STATE_IS_PROGRESS_VISIBLE = "STATE_IS_PROGRESS_VISIBLE";
-    private SmoothProgressBar spbToolbar;
+    private ProgressBar spbToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client);
-        KitKatTweaks.enableStatusBarTint(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        spbToolbar = (SmoothProgressBar) findViewById(R.id.spbToolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        spbToolbar = findViewById(R.id.spbToolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }

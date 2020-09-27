@@ -1,11 +1,12 @@
 package ph.edu.msuiit.rccarclient.adapters;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         if(address != null)
             deviceViewHolder.tvIpAddress.setText(device.getIpAddress().getHostAddress());
 
-        deviceViewHolder.ivDeviceIcon.setImageResource(R.drawable.ic_launcher);
+        deviceViewHolder.ivDeviceIcon.setImageResource(R.mipmap.ic_launcher);
     }
 
     @Override

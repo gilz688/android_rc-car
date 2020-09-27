@@ -3,17 +3,13 @@
 
     <string name="app_name">RC Car Client</string>
     <string name="action_refresh">Refresh</string>
-    <string name="btn_wifi_settings">Wi-Fi Settings</string>
 
-    <string name="wifi_off">Wi-Fi off</string>
     <string name="error_not_found">RC Car Server needs to be connected to the same Wi-Fi network.</string>
     <string name="error_wifi_off">Wi-Fi needs to be on to connect to RC Car Server.</string>
     <string name="error_io_exception">Wi-Fi network is unreachable. RC Car Client cannot find the RC Car Server.</string>
-    <string name="discovery_in_progress">Searching for RC Car Server...</string>
 
     <string name= "toggle_accelerometer_off"> Turn On Accelerometer</string>
     <string name= "toggle_accelerometer_on"> Turn Off Accelerometer</string>
 
 <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

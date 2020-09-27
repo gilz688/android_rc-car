@@ -4,11 +4,6 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,7 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
+import java.util.Objects;
 
 import ph.edu.msuiit.rccarclient.R;
 import ph.edu.msuiit.rccarclient.adapters.DeviceAdapter;
@@ -190,12 +192,12 @@ public class DiscoveryFragment extends Fragment implements DiscoveryView, Device
         filter.addAction(DiscoveryService.ACTION_DISCOVERY_CLIENT_ERROR);
         filter.addAction(DiscoveryService.ACTION_DISCOVERY_SERVER_NOT_FOUND);
         filter.addAction(DiscoveryService.ACTION_WIFI_OFF);
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver,
+        LocalBroadcastManager.getInstance(Objects.requireNonNull(getActivity())).registerReceiver(mMessageReceiver,
                 filter);
     }
 
     public void unRegisterDiscoveryReceiver() {
-        LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).unregisterReceiver(mMessageReceiver);
+        LocalBroadcastManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).unregisterReceiver(mMessageReceiver);
     }
 
     @Override

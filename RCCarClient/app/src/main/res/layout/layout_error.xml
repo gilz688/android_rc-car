@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="wrap_content"
     android:id="@+id/llError"
     android:orientation="vertical" android:gravity="center_horizontal"
@@ -14,12 +15,12 @@
         android:lineSpacingExtra="20dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
-    <ImageView
-        android:src="@drawable/ic_bg_sadcloud"
+    <androidx.appcompat.widget.AppCompatImageView
+        app:srcCompat="@drawable/ic_cloud_off"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnWifiSettings" android:layout_width="wrap_content"
         android:text="WiFi Settings"
         android:textSize="@dimen/abc_text_size_medium_material"
@@ -27,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:textColor="@android:color/white"
-        android:background="@drawable/material_button"/>
+        android:backgroundTint="@color/accent"
+        android:textColor="@android:color/white"/>
 
 </LinearLayout>

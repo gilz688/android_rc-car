@@ -5,13 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-import ph.edu.msuiit.rccarclient.R;
 import ph.edu.msuiit.rccarclient.common.RCResponse;
-import ph.edu.msuiit.rccarclient.discovery.DiscoveryService;
-import ph.edu.msuiit.rccarclient.discovery.proto.DiscoveryPresenter;
 import ph.edu.msuiit.rccarclient.tcp.proto.ControlsPresenter;
 
 public class TCPBroadcastReceiver extends BroadcastReceiver {

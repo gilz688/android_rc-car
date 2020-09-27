@@ -36,7 +36,7 @@ public class TCPServer extends Thread {
         isRunning = true;
         executor = new ThreadPoolExecutor(MAX_CLIENTS, MAX_CLIENTS,
                 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>());;
+                new LinkedBlockingQueue<Runnable>());
         start();
     }
 
@@ -91,6 +91,6 @@ public class TCPServer extends Thread {
     }
 
     public interface TCPServerListener{
-        public void onDataReceive(String line);
+        void onDataReceive(String line);
     }
 }

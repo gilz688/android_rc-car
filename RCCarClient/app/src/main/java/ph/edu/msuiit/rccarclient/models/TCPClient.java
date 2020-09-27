@@ -18,7 +18,7 @@ import java.util.concurrent.Future;
 import ph.edu.msuiit.rccarclient.common.RCCommand;
 
 
-public class TCPClient extends Thread implements RCClient{
+public class TCPClient extends Thread implements RCClient {
     private static final String TAG = "TCPClient";
     public static final int DEFAULT_PORT = 19877;
 

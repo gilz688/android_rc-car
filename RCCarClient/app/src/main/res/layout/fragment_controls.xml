@@ -9,7 +9,6 @@
         android:layout_height="fill_parent"
         android:weightSum="10"
         android:layout_alignParentTop="false"
-        android:layout_alignParentRight="false"
         android:layout_alignParentEnd="false"
         android:layout_alignParentStart="false"
         android:baselineAligned="false"
@@ -21,15 +20,13 @@
             android:layout_height="match_parent"
             android:layout_weight="5"
             android:gravity="center"
-            android:paddingLeft="30dp"
-            android:paddingRight="10dp">
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp">
 
             <ph.edu.msuiit.rccarclient.utils.ControlsSeekBar
                 android:id="@+id/horizontal_seek_bar"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"
                 android:progress="0"
                 android:progressDrawable="@drawable/progress"
                 android:thumb="@drawable/progress_thumb"
@@ -66,7 +63,6 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:id="@+id/linearLayout2">
 
@@ -77,21 +73,13 @@
             android:textOn="@string/toggle_accelerometer_on"
             android:textSize="@dimen/abc_text_size_medium_material"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:background="@drawable/material_toggle_button"
-            android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/vertical_seek_bar"
-            android:layout_toStartOf="@+id/vertical_seek_bar" />
+            android:textColor="@android:color/white" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Horn"
             android:id="@+id/button_horn"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@+id/toggle_accelerometer"
-            android:layout_toEndOf="@+id/toggle_accelerometer"
-            android:background="@drawable/material_button"
             android:textColor="@android:color/white"
             android:textSize="@dimen/abc_text_size_medium_material" />
     </LinearLayout>

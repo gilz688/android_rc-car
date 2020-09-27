@@ -5,8 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -42,7 +43,7 @@ public class DiscoveryService extends IntentService{
         switch(action){
             case INTENT_START_DISCOVERY:
                 serverFound = false;
-                WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
                 if(wifiManager.isWifiEnabled()) {
                     while(wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLING){
                         // wait until wifi is enabled

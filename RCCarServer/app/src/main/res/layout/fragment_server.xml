@@ -1,23 +1,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context=".ServerActivity"
-    android:orientation="vertical" android:gravity="center">
+    android:orientation="vertical" android:gravity="center"
+    android:id="@+id/linearLayout">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/wifi_ssid"
         android:id="@+id/tvWifiSSID"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
+        tools:layout_conversion_absoluteHeight="19dp"
+        tools:layout_editor_absoluteY="301dp"
+        tools:layout_editor_absoluteX="151dp"
+        tools:layout_conversion_absoluteWidth="109dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvWifiSSID"
         android:text="@string/ip_address"
         android:id="@+id/tvAddress"
-        android:layout_centerHorizontal="true" />
+        tools:layout_conversion_absoluteHeight="19dp"
+        tools:layout_editor_absoluteY="321dp"
+        tools:layout_editor_absoluteX="170dp"
+        tools:layout_conversion_absoluteWidth="72dp" />
 
 
     <TextView
@@ -26,18 +31,22 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Waiting for connection..."
         android:id="@+id/tvWaiting"
-        android:layout_below="@id/tvAddress"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:visibility="invisible"/>
+        android:visibility="invisible"
+        tools:layout_conversion_absoluteHeight="30dp"
+        tools:layout_editor_absoluteY="370dp"
+        tools:layout_editor_absoluteX="86dp"
+        tools:layout_conversion_absoluteWidth="238dp" />
 
     <Button
         android:text="@string/start_btn"
         android:id="@+id/btnStart"
-        style="@style/btn_style"
-        android:layout_marginTop="30dp"
-        android:layout_below="@id/tvWaiting"
-        android:layout_centerHorizontal="true"
-        android:textColor="@android:color/white" />
+        android:backgroundTint="@color/accent"
+        android:textColor="@android:color/white"
+        tools:layout_conversion_absoluteHeight="0dp"
+        tools:layout_editor_absoluteY="430dp"
+        tools:layout_editor_absoluteX="206dp"
+        android:layout_height="wrap_content"
+        tools:layout_conversion_absoluteWidth="0dp"
+        android:layout_width="wrap_content" />
 
 </LinearLayout>

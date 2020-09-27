@@ -39,7 +39,7 @@ public class RCCommand {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        return gson.toJson(this,RCCommand.class);
+        return gson.toJson(this, RCCommand.class);
     }
 
     public static RCCommand newInstanceFromJson(String json){

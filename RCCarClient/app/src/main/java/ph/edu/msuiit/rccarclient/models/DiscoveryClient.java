@@ -39,7 +39,7 @@ public class DiscoveryClient{
     /**
      * Starts discovery of servers connected in the same wifi network
      *
-     * @throws java.io.IOException
+     * @throws IOException
      */
     public void startDiscovery() throws IOException{
         DatagramSocket socket = new DatagramSocket(null);
@@ -59,7 +59,7 @@ public class DiscoveryClient{
      *
      * @param socket
      *          socket on which the announcement request was sent
-     * @throws java.io.IOException
+     * @throws IOException
      */
     public boolean listenForResponses(DatagramSocket socket) throws IOException {
         boolean found = false;

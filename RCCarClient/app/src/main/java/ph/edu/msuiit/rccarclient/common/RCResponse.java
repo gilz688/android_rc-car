@@ -39,7 +39,7 @@ public class RCResponse {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        return gson.toJson(this,RCResponse.class);
+        return gson.toJson(this, RCResponse.class);
     }
 
     public static RCResponse newInstanceFromJson(String json){

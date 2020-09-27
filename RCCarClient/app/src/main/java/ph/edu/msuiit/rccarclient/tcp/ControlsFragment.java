@@ -8,9 +8,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,15 +17,17 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.ToggleButton;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import ph.edu.msuiit.rccarclient.R;
-import ph.edu.msuiit.rccarclient.discovery.DiscoveryBroadcastReceiver;
-import ph.edu.msuiit.rccarclient.discovery.DiscoveryService;
 import ph.edu.msuiit.rccarclient.models.ParcelableDevice;
 import ph.edu.msuiit.rccarclient.tcp.proto.ControlsPresenter;
 import ph.edu.msuiit.rccarclient.tcp.proto.ControlsView;
 import ph.edu.msuiit.rccarclient.utils.ControlsSeekBar;
 
-public class ControlsFragment extends Fragment implements ControlsView, ControlsSeekBar.OnSeekBarChangeListener, SensorEventListener{
+public class ControlsFragment extends Fragment implements ControlsView, ControlsSeekBar.OnSeekBarChangeListener, SensorEventListener {
     private static final String ARG_DEVICE = "device";
     private ParcelableDevice device;
     private ControlsPresenter mPresenter;
@@ -123,17 +122,18 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
 
         return root;
     }
+
     private void enableAccelerometer() {
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(this, mMagnetometer,SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_NORMAL);
         horizontalSeekBar.disableTouchEvent();
     }
 
     private void disableAccelerometer() {
-        if(mSensorManager != null)
+        if (mSensorManager != null)
             mSensorManager.unregisterListener(this);
         horizontalSeekBar.enableTouchEvent();
     }
@@ -144,8 +144,7 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        switch (event.sensor.getType())
-        {
+        switch (event.sensor.getType()) {
             case Sensor.TYPE_MAGNETIC_FIELD:
                 magnetometerValues = lowPass(event.values.clone(), magnetometerValues);
                 break;
@@ -161,7 +160,7 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
             SensorManager.getRotationMatrix(matrixR, matrixI, accelerometerValues, magnetometerValues);
 
             float[] outR = new float[9];
-            SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_X,SensorManager.AXIS_MINUS_Y, outR);
+            SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_X, SensorManager.AXIS_MINUS_Y, outR);
             SensorManager.getOrientation(outR, angle);
 
             float pitch = angle[1] * 57.2957795f;
@@ -169,21 +168,21 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
             magnetometerValues = null; // retrigger the loop when things are repopulated
             accelerometerValues = null; // retrigger the loop when things are repopulated
 
-            int value = map(pitch, -20 , 20, MINIMUM_ANGLE, MAXIMUM_ANGLE);
+            int value = map(pitch, -20, 20, MINIMUM_ANGLE, MAXIMUM_ANGLE);
 
             horizontalSeekBar.setProgressValue(value);
         }
     }
 
-    public int map(float value, float in_min, float in_max, float out_min, float out_max){
+    public int map(float value, float in_min, float in_max, float out_min, float out_max) {
         return Math.round((value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
     }
 
     final float ALPHA = 0.5f;
 
-    protected float[] lowPass( float[] input, float[] output ) {
-        if ( output == null ) return input;
-        for ( int i=0; i<input.length; i++ ) {
+    protected float[] lowPass(float[] input, float[] output) {
+        if (output == null) return input;
+        for (int i = 0; i < input.length; i++) {
             output[i] = output[i] + ALPHA * (input[i] - output[i]);
         }
         return output;
@@ -204,7 +203,7 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
         disableAccelerometer();
     }
 
-    public void registerReceivers(){
+    public void registerReceivers() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(TCPService.ACTION_TCP_CONNECTED);
         filter.addAction(TCPService.ACTION_TCP_DISCONNECTED);
@@ -219,7 +218,7 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        switch(seekBar.getId()) {
+        switch (seekBar.getId()) {
             case (R.id.vertical_seek_bar):
                 mPresenter.onVSeekBarProgressChanged(progress);
                 break;
@@ -238,7 +237,7 @@ public class ControlsFragment extends Fragment implements ControlsView, Controls
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        switch(seekBar.getId()) {
+        switch (seekBar.getId()) {
             case (R.id.vertical_seek_bar):
                 verticalSeekBar.setProgressValue(0);
                 break;
