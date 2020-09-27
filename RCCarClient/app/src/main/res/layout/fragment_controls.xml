@@ -72,6 +72,7 @@
             android:textOff="@string/toggle_accelerometer_off"
             android:textOn="@string/toggle_accelerometer_on"
             android:textSize="@dimen/abc_text_size_medium_material"
+            android:backgroundTint="@color/accent"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white" />
 
@@ -79,6 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Horn"
+            android:backgroundTint="@color/accent"
             android:id="@+id/button_horn"
             android:textColor="@android:color/white"
             android:textSize="@dimen/abc_text_size_medium_material" />
