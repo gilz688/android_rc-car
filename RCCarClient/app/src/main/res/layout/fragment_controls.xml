@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ph.edu.msuiit.rccarclient.tcp.ControlsFragment">
+    tools:context="com.github.gilz688.rccarclient.tcp.ControlsFragment">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -23,7 +23,7 @@
             android:paddingStart="30dp"
             android:paddingEnd="10dp">
 
-            <ph.edu.msuiit.rccarclient.utils.ControlsSeekBar
+            <com.github.gilz688.rccarclient.utils.ControlsSeekBar
                 android:id="@+id/horizontal_seek_bar"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
             android:layout_gravity="left"
             android:padding="20dp">
 
-            <ph.edu.msuiit.rccarclient.utils.ControlsSeekBar
+            <com.github.gilz688.rccarclient.utils.ControlsSeekBar
                 android:id="@+id/vertical_seek_bar"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
