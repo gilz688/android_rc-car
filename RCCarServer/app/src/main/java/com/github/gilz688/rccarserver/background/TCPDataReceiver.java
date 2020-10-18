@@ -14,7 +14,7 @@ import com.github.gilz688.rccarserver.common.RCCommand;
 public class TCPDataReceiver implements TCPServer.TCPServerListener{
     private static final String TAG = "TCPDataReceiver";
     private final MediaPlayer mp;
-    private RCCar mCar;
+    private final RCCar mCar;
 
     public TCPDataReceiver(Context context, RCCar car){
         mCar = car;

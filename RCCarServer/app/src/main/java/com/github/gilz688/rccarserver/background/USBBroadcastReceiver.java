@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.widget.Toast;
 
 public class USBBroadcastReceiver extends BroadcastReceiver {
@@ -24,7 +25,11 @@ public class USBBroadcastReceiver extends BroadcastReceiver {
                 break;
             case RCCarService.ACTION_USB_PERMISSION:
                 Toast.makeText(context,"Permission Granted!",Toast.LENGTH_SHORT).show();
-                context.startService(serviceIntent);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(serviceIntent);
+                } else {
+                    context.startService(serviceIntent);
+                }
             default:
         }
     }

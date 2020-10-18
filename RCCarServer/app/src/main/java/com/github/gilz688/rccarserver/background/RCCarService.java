@@ -1,21 +1,32 @@
 package com.github.gilz688.rccarserver.background;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
+
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import com.github.gilz688.rccarserver.R;
 import com.github.gilz688.rccarserver.ServerActivity;
+import com.hoho.android.usbserial.driver.UsbSerialDriver;
+import com.hoho.android.usbserial.driver.UsbSerialPort;
+import com.hoho.android.usbserial.driver.UsbSerialProber;
+
 import tw.com.prolific.driver.pl2303.PL2303Driver;
 
 public class RCCarService extends Service {
@@ -23,28 +34,43 @@ public class RCCarService extends Service {
     public static final String ACTION_USB_PERMISSION = "com.github.gilz688.rccarserver.USB_PERMISSION";
     private final IBinder mBinder = new TCPServiceBinder();
     private TCPServer mServer;
-    private TCPServer.TCPServerListener mListener;
-    private static final int NOTIFICATION_ID = 19876;
+    public static final int NOTIFICATION_ID = 19876;
     private RCCar car;
+    public static final String CHANNEL_ID = "RC_CAR_CHANNEL";
 
     @Override
     public void onCreate(){
         super.onCreate();
         Log.d(TAG,"TCPService onCreate()");
 
-        showNotification();
+        startForeground();
 
-        PL2303Driver mSerial = new PL2303Driver((UsbManager) getSystemService(Context.USB_SERVICE),
-                this, ACTION_USB_PERMISSION);
-        car = new RCCar(mSerial);
+        // Find all available drivers from attached devices.
+        UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
+        List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
+        if (availableDrivers.isEmpty()) {
+            return;
+        }
+
+        // Open a connection to the first available driver.
+        UsbSerialDriver driver = availableDrivers.get(0);
+        UsbDeviceConnection connection = manager.openDevice(driver.getDevice());
+        if (connection == null) {
+            // add UsbManager.requestPermission(driver.getDevice(), ..) handling here
+            return;
+        }
+
         try {
+            UsbSerialPort serialPort = driver.getPorts().get(0); // Most devices have just one port (port 0)
+
+            car = new RCCar(serialPort, connection);
             car.connect();
 
             DiscoveryServer dThread;
             dThread = new DiscoveryServer("DiscoveryServer");
             dThread.start();
 
-            mListener = new TCPDataReceiver(this,car);
+            TCPServer.TCPServerListener mListener = new TCPDataReceiver(this, car);
             mServer = new TCPServer();
             mServer.setTCPServerListener(mListener);
             mServer.startServer();
@@ -53,19 +79,37 @@ public class RCCarService extends Service {
         }
     }
 
-    public void showNotification(){
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(this, "com.github.gilz688.rccarserver")
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle("RC Car Server")
-                        .setContentText("Listening for incoming commands...")
-                        .setOngoing(true);
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void createNotificationChannel() {
+        String name = getString(R.string.channel_name);
+        String descriptionText = getString(R.string.channel_description);
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        NotificationChannel channel = new NotificationChannel(RCCarService.CHANNEL_ID, name, importance);
+        channel.setDescription(descriptionText);
 
-        Intent targetIntent = new Intent(this, ServerActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(contentIntent);
-        NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        nManager.notify(NOTIFICATION_ID, builder.build());
+        // Register the channel with the system
+        NotificationManager notificationManager = (NotificationManager)
+                getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.createNotificationChannel(channel);
+    }
+
+    public void startForeground(){
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel();
+        }
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
+
+        Notification notification = notificationBuilder
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("RC Car Server")
+                .setContentText("Listening for incoming commands...")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .build();
+
+        startForeground(NOTIFICATION_ID, notification);
     }
 
     public void hideNotification(){
@@ -75,11 +119,11 @@ public class RCCarService extends Service {
 
     public void stopDiscoveryServer(){
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-        Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
+        Thread[] threadArray = threadSet.toArray(new Thread[0]);
 
-        for (int i = 0; i < threadArray.length; i++) {
-            if (threadArray[i].getName().equalsIgnoreCase("DiscoveryServer")) {
-                DiscoveryServer dThread =  (DiscoveryServer) threadArray[i];
+        for (Thread thread : threadArray) {
+            if (thread.getName().equalsIgnoreCase("DiscoveryServer")) {
+                DiscoveryServer dThread = (DiscoveryServer) thread;
                 dThread.disconnect();
             }
         }

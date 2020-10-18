@@ -19,6 +19,8 @@ import com.github.gilz688.rccarserver.background.RCCarService;
 import com.github.gilz688.rccarserver.proto.ServerPresenter;
 import com.github.gilz688.rccarserver.proto.ServerView;
 
+import java.util.Objects;
+
 public class ServerFragment extends Fragment implements ServerView, View.OnClickListener {
 
     public static final String TAG = "ServerFragment";
@@ -57,7 +59,7 @@ public class ServerFragment extends Fragment implements ServerView, View.OnClick
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_server, container, false);
-        ServerConfiguration config = new ServerConfiguration((WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE));
+        ServerConfiguration config = new ServerConfiguration((WifiManager) Objects.requireNonNull(getActivity()).getApplicationContext().getSystemService(Context.WIFI_SERVICE));
         mPresenter = new ServerPresenterImpl(this, new ServerInteractorImpl(getActivity(), mConnection), config);
         btnListening = rootView.findViewById(R.id.btnStart);
         btnListening.setOnClickListener(this);
@@ -79,31 +81,31 @@ public class ServerFragment extends Fragment implements ServerView, View.OnClick
     public void onResume() {
         super.onResume();
         mPresenter.onStart();
-        String action = getActivity().getIntent().getAction();
+        String action = Objects.requireNonNull(getActivity()).getIntent().getAction();
         Log.d(TAG, "onResume:" + action);
     }
 
     @Override
     public void hideListeningView() {
         isListening = false;
-        btnListening.setText("Enable RC Car Server");
+        btnListening.setText(R.string.text_enable_rc_car_server);
     }
 
     @Override
     public void showListeningView() {
         isListening = true;
-        btnListening.setText("Disable RC Car Server");
+        btnListening.setText(R.string.text_disable_rc_car_server);
     }
 
     @Override
     public void showAddress(String address) {
         String label = this.getResources().getString(R.string.ip_address);
-        tvAddress.setText(label + " " + address);
+        tvAddress.setText(String.format("%s %s", label, address));
     }
 
     @Override
     public void showSSID(String ssid) {
         String label = this.getResources().getString(R.string.wifi_ssid);
-        tvWifiSSID.setText(label + " " + ssid);
+        tvWifiSSID.setText(String.format("%s %s", label, ssid));
     }
 }

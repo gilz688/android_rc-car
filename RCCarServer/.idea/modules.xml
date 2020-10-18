@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/RC_Car_Server.iml" filepath="$PROJECT_DIR$/.idea/modules/RC_Car_Server.iml" group="RC_Car_Server" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="RC Car Server/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/RC_Car_Server.iml" filepath="$PROJECT_DIR$/.idea/modules/RC_Car_Server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/RC_Car_Server.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/RC_Car_Server.app.iml" />
     </modules>
   </component>
 </project>

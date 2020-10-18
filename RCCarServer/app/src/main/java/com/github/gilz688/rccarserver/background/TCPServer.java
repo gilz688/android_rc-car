@@ -19,7 +19,7 @@ public class TCPServer extends Thread {
     private ServerSocket serverSocket;
     private TCPServerListener mListener;
     private ThreadPoolExecutor executor;
-    private int serverPort;
+    private final int serverPort;
     private volatile boolean isRunning = false;
     private TCPServerTask serverTask;
 

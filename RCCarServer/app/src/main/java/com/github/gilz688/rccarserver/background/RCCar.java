@@ -1,56 +1,44 @@
 package com.github.gilz688.rccarserver.background;
 
+import android.hardware.usb.UsbDeviceConnection;
 import android.util.Log;
 
-import java.io.IOException;
+import com.hoho.android.usbserial.driver.UsbSerialPort;
 
-import tw.com.prolific.driver.pl2303.PL2303Driver;
+import java.io.IOException;
 
 public class RCCar{
     private static final String TAG = "RCCar";
     public static final String ACTION_USB_PERMISSION = "com.github.gilz688.rccarserver.USB_PERMISSION";
-    private PL2303Driver mSerial;
+    private final UsbDeviceConnection mConnection;
+    private UsbSerialPort mPort;
 
-    public RCCar(PL2303Driver serial){
-        mSerial = serial;
+    public RCCar(UsbSerialPort port, UsbDeviceConnection connection){
+        mPort = port;
+        mConnection = connection;
     }
 
     public void connect() throws IOException {
-        if(null==mSerial)
-            return;
-        if(!mSerial.isConnected()) {
-            int i=0;
-            while(i++ < 5 && mSerial.enumerate()){
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        if(mPort == null) return;
 
-        if (!mSerial.InitByBaudRate(PL2303Driver.BaudRate.B9600,700)) {
-
-            if(!mSerial.PL2303Device_IsHasPermission()) {
-                throw new PermissionException();
-            }
-
-            if(mSerial.PL2303Device_IsHasPermission() && (!mSerial.PL2303Device_IsSupportChip())) {
-                throw new UnsupportedChipException();
-            }
-        }
+        mPort.setParameters(9600, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
+        mPort.open(mConnection);
     }
 
-    public void disconnect(){
-        if(mSerial!=null) {
-            mSerial.end();
-            mSerial = null;
+    public void disconnect() {
+        if(mPort == null) return;
+
+        try {
+            mPort.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        mPort = null;
     }
 
     public void send(String command) throws IOException {
         Log.d("RCCar",command);
-        int res = mSerial.write(command.concat("\r").getBytes(), command.length() + 1);
+        int res = mPort.write(command.concat("\r").getBytes(), command.length() + 1);
         if( res < 0 ) {
             throw new SerialSendingException();
         }
