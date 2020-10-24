@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
  *  Handles requests from a TCP Client
  */
 public class TCPServer extends Thread {
-    public static final int DEFAULT_PORT = 19877;
     private static final String TAG = "TCPServer";
     private static final int MAX_CLIENTS = 1;
     private ServerSocket serverSocket;
@@ -21,11 +20,6 @@ public class TCPServer extends Thread {
     private ThreadPoolExecutor executor;
     private final int serverPort;
     private volatile boolean isRunning = false;
-    private TCPServerTask serverTask;
-
-    public TCPServer() {
-        serverPort = DEFAULT_PORT;
-    }
 
     public TCPServer(int port) {
         serverPort = port;
@@ -61,7 +55,7 @@ public class TCPServer extends Thread {
                 // On connection establishment start,
                 // add server task to executor.
                 if(executor.getActiveCount() < MAX_CLIENTS) {
-                    serverTask = new TCPServerTask(connectionSocket);
+                    TCPServerTask serverTask = new TCPServerTask(connectionSocket);
                     serverTask.setTCPServerListener(mListener);
                     executor.execute(serverTask);
                 }

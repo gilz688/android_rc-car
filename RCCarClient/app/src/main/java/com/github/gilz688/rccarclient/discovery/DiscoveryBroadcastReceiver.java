@@ -5,21 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.github.gilz688.rccarclient.R;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
-import com.github.gilz688.rccarclient.R;
-import com.github.gilz688.rccarclient.discovery.proto.DiscoveryPresenter;
 
 public class DiscoveryBroadcastReceiver extends BroadcastReceiver {
     public static final String EXTRA_SERVER_NAME = "serverName";
     public static final String EXTRA_SERVER_ADDRESS = "serverAddress";
     public static final String EXTRA_SERVER_PORT = "serverPort";
     private static final String TAG = "DBroadcastReceiver";
-    private DiscoveryPresenter mPresenter;
+    private final DiscoveryEventListener mListener;
 
-    public DiscoveryBroadcastReceiver(DiscoveryPresenter presenter){
-        mPresenter = presenter;
+    public DiscoveryBroadcastReceiver(DiscoveryEventListener listener) {
+        mListener = listener;
     }
 
     @Override
@@ -33,29 +32,38 @@ public class DiscoveryBroadcastReceiver extends BroadcastReceiver {
                 try {
                     serverAddress = InetAddress.getByAddress(intent.getByteArrayExtra(EXTRA_SERVER_ADDRESS));
                 } catch (UnknownHostException e) {
-                    Log.e(TAG,e.getMessage());
+                    Log.e(TAG, e.getMessage());
                 }
                 int serverPort = intent.getIntExtra(EXTRA_SERVER_PORT, -1);
 
-                mPresenter.onDeviceFound(serverName, serverAddress, serverPort);
+                mListener.onDeviceFound(serverName, serverAddress, serverPort);
                 break;
             case DiscoveryService.ACTION_DISCOVERY_CLIENT_STARTED:
-                mPresenter.discoveryStarted();
+                mListener.discoveryStarted();
                 break;
             case DiscoveryService.ACTION_DISCOVERY_CLIENT_ENDED:
-                mPresenter.discoveryEnded();
+                mListener.discoveryEnded();
                 break;
             case DiscoveryService.ACTION_DISCOVERY_CLIENT_ERROR:
-                mPresenter.discoveryError(context.getResources().getString(R.string.error_io_exception));
+                mListener.discoveryError(context.getResources().getString(R.string.error_io_exception));
                 break;
             case DiscoveryService.ACTION_WIFI_OFF:
-                mPresenter.discoveryError(context.getResources().getString(R.string.error_wifi_off));
+                mListener.discoveryError(context.getResources().getString(R.string.error_wifi_off));
                 break;
             case DiscoveryService.ACTION_DISCOVERY_SERVER_NOT_FOUND:
-                mPresenter.discoveryError(context.getResources().getString(R.string.error_not_found));
+                mListener.discoveryError(context.getResources().getString(R.string.error_not_found));
                 break;
         }
         Log.d("receiver", "Got message: " + intent.getAction());
     }
 
+    public interface DiscoveryEventListener {
+        void onDeviceFound(String serverName, InetAddress serverAddress, int serverPort);
+
+        void discoveryStarted();
+
+        void discoveryError(String error);
+
+        void discoveryEnded();
+    }
 }

@@ -19,3 +19,10 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Gson specific classes
+#-keep class com.google.gson.stream.** { *; }
+
+# Application classes that will be serialized/deserialized over Gson
+-keep class com.github.gilz688.rccarclient.model.RCCommand { *; }
+-keep class com.github.gilz688.rccarclient.model.RCResponse { *; }

@@ -8,17 +8,18 @@ import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.github.gilz688.rccarclient.models.Device;
-import com.github.gilz688.rccarclient.models.RCClient;
-import com.github.gilz688.rccarclient.models.TCPClient;
+import com.github.gilz688.rccarclient.model.Device;
+import com.github.gilz688.rccarclient.model.RCClient;
+import com.github.gilz688.rccarclient.model.TCPClient;
 
-public class TCPService extends Service {
+public class TCPService extends Service implements TCPClient.EventListener {
     private static final String TAG = "TCPService";
     public static final String ACTION_HORN = "horn";
     public static final String ACTION_STOP_HORN = "stop horn";
     public static final String ACTION_TCP_CONNECTED = "ACTION_TCP_CONNECTED";
     public static final String ACTION_TCP_DISCONNECTED = "ACTION_TCP_DISCONNECTED";
     public static final String ACTION_TCP_RESPONSE = "ACTION_TCP_RESPONSE";
+    public static final String ACTION_TCP_CONNECTION_FAILED = "ACTION_TCP_CONNECTION_FAILED";
     private final IBinder mBinder = new TCPServiceBinder();
     private RCClient mClient;
 
@@ -33,8 +34,10 @@ public class TCPService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        Device device = (Device) intent.getParcelableExtra("device");
-        mClient = new TCPClient(device.getIpAddress());
+        Device device = intent.getParcelableExtra("device");
+        assert device != null;
+        mClient = new TCPClient(device.getIpAddress(), device.getPort());
+        mClient.setEventListener(this);
         mClient.startClient();
         return mBinder;
     }
@@ -42,9 +45,9 @@ public class TCPService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if((mClient != null) && (mClient.isRunning())) {
+        if ((mClient != null) && (mClient.isRunning())) {
             mClient.stopClient();
-            Log.d(TAG,"TCPService has been stopped.");
+            Log.d(TAG, "TCPService has been stopped.");
         }
     }
 
@@ -52,9 +55,31 @@ public class TCPService extends Service {
         mClient.sendCommand(command, value);
     }
 
-    public void sendCommand(String command) { mClient.sendCommand(command); }
+    public void sendCommand(String command) {
+        mClient.sendCommand(command);
+    }
 
-    private void sendMessage(String action) {
+    @Override
+    public void onConnected() {
+        broadcast(ACTION_TCP_CONNECTED);
+    }
+
+    @Override
+    public void onDisconnected() {
+        broadcast(ACTION_TCP_DISCONNECTED);
+    }
+
+    @Override
+    public void onConnectionFailed() {
+        broadcast(ACTION_TCP_CONNECTION_FAILED);
+    }
+
+    @Override
+    public void onMessageReceived(String message) {
+        broadcast(ACTION_TCP_RESPONSE);
+    }
+
+    private void broadcast(String action) {
         Intent intent = new Intent(action);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
     }

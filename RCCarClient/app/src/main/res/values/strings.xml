@@ -10,5 +10,6 @@
 
     <string name= "toggle_accelerometer_off"> Turn On Accelerometer</string>
     <string name= "toggle_accelerometer_on"> Turn Off Accelerometer</string>
+    <string name="text_app_theme">Select App Theme</string>
 
 </resources>

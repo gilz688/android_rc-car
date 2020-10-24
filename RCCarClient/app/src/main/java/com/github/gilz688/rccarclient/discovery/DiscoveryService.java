@@ -12,7 +12,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import java.io.IOException;
 import java.net.InetAddress;
 
-import com.github.gilz688.rccarclient.models.DiscoveryClient;
+import com.github.gilz688.rccarclient.model.DiscoveryClient;
 
 public class DiscoveryService extends IntentService{
     public static final String PARAM_DISCOVERY_PORT = "PARAM_DISCOVERY_PORT";
@@ -26,6 +26,8 @@ public class DiscoveryService extends IntentService{
     public static final String ACTION_DISCOVERY_CLIENT_ERROR = "DISCOVERY_CLIENT_ERROR";
     public  static final String ACTION_DISCOVERY_SERVER_NOT_FOUND = "DISCOVERY_SERVER_NOT_FOUND";
     public static final String ACTION_WIFI_OFF = "WIFI_OFF";
+
+    public static final String INTENT_STOP_DISCOVERY = "INTENT_STOP_DISCOVERY";
 
     private static final String TAG = "DiscoveryService";
 
@@ -55,29 +57,26 @@ public class DiscoveryService extends IntentService{
                     }
 
                     try {
-                        sendMessage(ACTION_DISCOVERY_CLIENT_STARTED);
+                        broadcast(ACTION_DISCOVERY_CLIENT_STARTED);
                         DiscoveryClient client = new DiscoveryClient(getBroadcastAddress(wifiManager));
                         client.setTimeout(timeout);
                         client.setDiscoveryClientPort(discoveryClientPort);
-                        client.setOnServerFoundListener(new DiscoveryClient.OnServerFoundListener() {
-                            @Override
-                            public void onServerFound(String serverName, InetAddress serverAddress, int serverPort) {
-                                serverFound = true;
-                                sendServerFoundMessage(serverName, serverAddress, serverPort);
-                            }
+                        client.setOnServerFoundListener((serverName, serverAddress, serverPort) -> {
+                            serverFound = true;
+                            sendServerFoundMessage(serverName, serverAddress, serverPort);
                         });
                         client.startDiscovery();
                         if (!serverFound)
-                            sendMessage(ACTION_DISCOVERY_SERVER_NOT_FOUND);
+                            broadcast(ACTION_DISCOVERY_SERVER_NOT_FOUND);
                     } catch (IOException e) {
-                        sendMessage(ACTION_DISCOVERY_CLIENT_ERROR);
+                        broadcast(ACTION_DISCOVERY_CLIENT_ERROR);
                         Log.e(TAG,e.getMessage());
                     } finally {
-                        sendMessage(ACTION_DISCOVERY_CLIENT_ENDED);
+                        broadcast(ACTION_DISCOVERY_CLIENT_ENDED);
                     }
                 }
                 else{
-                    sendMessage(ACTION_WIFI_OFF);
+                    broadcast(ACTION_WIFI_OFF);
                 }
                 break;
             default:
@@ -111,7 +110,7 @@ public class DiscoveryService extends IntentService{
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
     }
 
-    private void sendMessage(String action) {
+    private void broadcast(String action) {
         Intent intent = new Intent(action);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
     }
