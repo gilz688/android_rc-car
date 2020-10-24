@@ -15,7 +15,6 @@ import com.github.gilz688.rccarclient.model.TCPClient;
 public class TCPService extends Service implements TCPClient.EventListener {
     private static final String TAG = "TCPService";
     public static final String ACTION_HORN = "horn";
-    public static final String ACTION_STOP_HORN = "stop horn";
     public static final String ACTION_TCP_CONNECTED = "ACTION_TCP_CONNECTED";
     public static final String ACTION_TCP_DISCONNECTED = "ACTION_TCP_DISCONNECTED";
     public static final String ACTION_TCP_RESPONSE = "ACTION_TCP_RESPONSE";
@@ -52,6 +51,10 @@ public class TCPService extends Service implements TCPClient.EventListener {
     }
 
     public void sendCommand(String command, int value) {
+        mClient.sendCommand(command, value);
+    }
+
+    public void sendCommand(String command, String value) {
         mClient.sendCommand(command, value);
     }
 

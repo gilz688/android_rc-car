@@ -127,7 +127,7 @@ public class MainFragment extends Fragment implements ControlsSeekBar.OnSeekBarC
                     deviceDialog.show(requireActivity().getSupportFragmentManager(), DeviceDialog.TAG);
                 }
             }
-            viewModel.getReqAppTheme().postValue(false);
+            viewModel.getReqConnect().postValue(false);
         });
 
         // Observe when horizontal value is updated from the View Model

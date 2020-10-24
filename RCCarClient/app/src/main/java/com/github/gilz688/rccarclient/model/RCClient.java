@@ -4,6 +4,7 @@ public interface RCClient {
     void startClient();
     void stopClient();
     void sendCommand(String command, int value);
+    void sendCommand(String command, String value);
     void sendCommand(String command);
     boolean isRunning();
     void setEventListener(TCPClient.EventListener listener);

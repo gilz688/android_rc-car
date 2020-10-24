@@ -135,13 +135,13 @@ public class MainActivity extends AppCompatActivity implements TCPBroadcastRecei
 
     public void sendHornCommand() {
         if(mBound) {
-            mBoundService.sendCommand(TCPService.ACTION_HORN);
+            mBoundService.sendCommand(TCPService.ACTION_HORN, "start");
         }
     }
 
     public void sendStopHornCommand() {
         if(mBound) {
-            mBoundService.sendCommand(TCPService.ACTION_STOP_HORN);
+            mBoundService.sendCommand(TCPService.ACTION_HORN, "stop");
         }
     }
 

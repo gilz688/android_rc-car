@@ -91,11 +91,17 @@ public class TCPClient extends Thread implements RCClient {
         CommandSender cs = new CommandSender(command, value);
         Future<?> future = executor.submit(cs);
         try {
-            if (future.get() == null) {
-                Log.d(TAG, "Runnable is terminated after execution");
-            } else {
-                Log.d(TAG, "Runnable is still running after execution");
-            }
+            future.get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendCommand(String command, String value) {
+        CommandSender cs = new CommandSender(command, value);
+        Future<?> future = executor.submit(cs);
+        try {
+            future.get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -105,11 +111,7 @@ public class TCPClient extends Thread implements RCClient {
         CommandSender cs = new CommandSender(command);
         Future<?> future = executor.submit(cs);
         try {
-            if (future.get() == null) {
-                Log.d(TAG, "Runnable is terminated after execution");
-            } else {
-                Log.d(TAG, "Runnable is still running after execution");
-            }
+            future.get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -117,8 +119,8 @@ public class TCPClient extends Thread implements RCClient {
 
     class CommandSender implements Runnable {
         private final String command;
-        private int value;
         private final boolean hasParameter;
+        private Object value;
 
         CommandSender(String command, int value) {
             this.command = command;
@@ -129,6 +131,12 @@ public class TCPClient extends Thread implements RCClient {
         public CommandSender(String command) {
             this.command = command;
             this.hasParameter = false;
+        }
+
+        public CommandSender(String command, String value) {
+            this.command = command;
+            this.value = value;
+            this.hasParameter = true;
         }
 
         @Override
