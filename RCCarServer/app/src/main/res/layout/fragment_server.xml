@@ -7,18 +7,26 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/wifi_ssid"
-        android:id="@+id/tvWifiSSID"
+        android:text="@string/ip_address"
+        android:id="@+id/tvAddress"
         tools:layout_conversion_absoluteHeight="19dp"
-        tools:layout_editor_absoluteY="301dp"
-        tools:layout_editor_absoluteX="151dp"
-        tools:layout_conversion_absoluteWidth="109dp" />
-
+        tools:layout_editor_absoluteY="321dp"
+        tools:layout_editor_absoluteX="170dp"
+        tools:layout_conversion_absoluteWidth="72dp" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ip_address"
-        android:id="@+id/tvAddress"
+        android:text="@string/udp_port"
+        android:id="@+id/tvUdpPort"
+        tools:layout_conversion_absoluteHeight="19dp"
+        tools:layout_editor_absoluteY="321dp"
+        tools:layout_editor_absoluteX="170dp"
+        tools:layout_conversion_absoluteWidth="72dp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tcp_port"
+        android:id="@+id/tvTcpPort"
         tools:layout_conversion_absoluteHeight="19dp"
         tools:layout_editor_absoluteY="321dp"
         tools:layout_editor_absoluteX="170dp"

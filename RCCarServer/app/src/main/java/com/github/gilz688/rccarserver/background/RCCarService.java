@@ -35,6 +35,7 @@ public class RCCarService extends Service {
     private final IBinder mBinder = new TCPServiceBinder();
     private TCPServer mServer;
     public static final int NOTIFICATION_ID = 19876;
+    public static final int DEFAULT_TCP_PORT = 50000;
     private RCCar car;
     public static final String CHANNEL_ID = "RC_CAR_CHANNEL";
 
@@ -71,7 +72,7 @@ public class RCCarService extends Service {
             dThread.start();
 
             TCPServer.TCPServerListener mListener = new TCPDataReceiver(this, car);
-            mServer = new TCPServer();
+            mServer = new TCPServer(DEFAULT_TCP_PORT);
             mServer.setTCPServerListener(mListener);
             mServer.startServer();
         } catch (IOException e) {

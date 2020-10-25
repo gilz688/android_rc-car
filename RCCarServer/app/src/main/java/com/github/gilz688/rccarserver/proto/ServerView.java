@@ -4,5 +4,8 @@ public interface ServerView {
     void showListeningView();
     void hideListeningView();
     void showAddress(String address);
-    void showSSID(String ssid);
+
+    void showUdpPort(int tcpPort);
+
+    void showTcpPort(int tcpPort);
 }

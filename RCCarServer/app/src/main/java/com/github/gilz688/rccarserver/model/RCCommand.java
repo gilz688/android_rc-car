@@ -1,4 +1,4 @@
-package com.github.gilz688.rccarserver.common;
+package com.github.gilz688.rccarserver.model;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -7,22 +7,22 @@ import com.google.gson.GsonBuilder;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RCResponse {
-	private String request;
+public class RCCommand {
+	private String cmd;
 	private Map<String,Object> data;
-
+	
 	public String getCommand() {
-		return request;
+		return cmd;
 	}
-
-	public RCResponse(String response) {
+	
+	public RCCommand(String command) {
 		super();
-		this.request = response;
+		this.cmd = command;
 		this.data = new HashMap<>();
 	}
 	
-	public void setResponse(String response) {
-		this.request = response;
+	public void setCommand(String command) {
+		this.cmd = command;
 	}
 	
 	public void putData(String key, Object value) {
@@ -39,15 +39,15 @@ public class RCResponse {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        return gson.toJson(this,RCResponse.class);
+        return gson.toJson(this,RCCommand.class);
     }
 
-    public static RCResponse newInstanceFromJson(String json){
+    public static RCCommand newInstanceFromJson(String json){
         Gson gson = new GsonBuilder()
                 .disableHtmlEscaping()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        return gson.fromJson(json, RCResponse.class);
+        return gson.fromJson(json, RCCommand.class);
     }
 }

@@ -10,14 +10,11 @@ import java.net.UnknownHostException;
 public class ServerConfiguration {
     private static final String TAG = "ServerConfiguration";
     private WifiManager mWifiManager;
+    private int tcpPort = 50000;
+    private int udpPort = 18760;
 
     public ServerConfiguration(WifiManager manager){
         mWifiManager = manager;
-    }
-
-    public String getWifiSSID(){
-        WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-        return wifiInfo.getSSID();
     }
 
     public String getWifiIpAddress(){
@@ -40,5 +37,13 @@ public class ServerConfiguration {
             Log.e(TAG, e.getMessage());
         }
         return address;
+    }
+
+    public int getTcpPort() {
+        return tcpPort;
+    }
+
+    public int getUdpPort() {
+        return udpPort;
     }
 }

@@ -80,7 +80,7 @@ public class MainFragment extends Fragment implements ControlsSeekBar.OnSeekBarC
         verticalSeekBar.setOnSeekBarChangeListener(this);
 
         // Configure steering joystick
-        ControlsSeekBar horizontalSeekBar2 = binding.horizontalSeekBar2;
+        ControlsSeekBar horizontalSeekBar2 = binding.horizontalSeekBar;
         horizontalSeekBar2.setMinValue(MainViewModel.MINIMUM_ANGLE);
         horizontalSeekBar2.setMaxValue(MainViewModel.MAXIMUM_ANGLE);
         horizontalSeekBar2.setProgressValue(0);
@@ -132,7 +132,7 @@ public class MainFragment extends Fragment implements ControlsSeekBar.OnSeekBarC
 
         // Observe when horizontal value is updated from the View Model
         viewModel.getHorizontalValue().observe(viewLifecycleOwner, (value) -> {
-            binding.horizontalSeekBar2.setProgressValue(value);
+            binding.horizontalSeekBar.setProgressValue(value);
             // Log.d("MainFragment", "getHorizontalValue: " + value);
             sharedViewModel.setAngle(value);
         });
@@ -148,11 +148,11 @@ public class MainFragment extends Fragment implements ControlsSeekBar.OnSeekBarC
             if(value == null) return;
 
             if(value) {
-                binding.horizontalSeekBar2.disableTouchEvent();
+                binding.horizontalSeekBar.disableTouchEvent();
             } else {
                 viewModel.getHorizontalValue().postValue(0);
-                binding.horizontalSeekBar2.setProgressValue(0);
-                binding.horizontalSeekBar2.enableTouchEvent();
+                binding.horizontalSeekBar.setProgressValue(0);
+                binding.horizontalSeekBar.enableTouchEvent();
             }
         });
 
@@ -182,7 +182,7 @@ public class MainFragment extends Fragment implements ControlsSeekBar.OnSeekBarC
                 viewModel.getVerticalValue().postValue(progress);
                 break;
 
-            case (R.id.horizontal_seek_bar_2):
+            case (R.id.horizontal_seek_bar):
                 viewModel.getHorizontalValue().postValue(progress);
                 break;
         }
@@ -201,8 +201,8 @@ public class MainFragment extends Fragment implements ControlsSeekBar.OnSeekBarC
                 binding.verticalSeekBar.setProgressValue(0);
                 break;
 
-            case (R.id.horizontal_seek_bar_2):
-                binding.horizontalSeekBar2.setProgressValue(0);
+            case (R.id.horizontal_seek_bar):
+                binding.horizontalSeekBar.setProgressValue(0);
                 break;
         }
     }

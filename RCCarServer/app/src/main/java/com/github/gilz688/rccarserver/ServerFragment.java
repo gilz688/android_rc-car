@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.github.gilz688.rccarserver.background.RCCarService;
+import com.github.gilz688.rccarserver.databinding.FragmentServerBinding;
 import com.github.gilz688.rccarserver.proto.ServerPresenter;
 import com.github.gilz688.rccarserver.proto.ServerView;
 
@@ -29,7 +30,7 @@ public class ServerFragment extends Fragment implements ServerView, View.OnClick
     private boolean isListening;
     private boolean mBound;
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className,
@@ -47,10 +48,7 @@ public class ServerFragment extends Fragment implements ServerView, View.OnClick
         }
     };
 
-    private TextView tvWaiting;
-    private TextView tvAddress;
-    private TextView tvWifiSSID;
-    private Button btnListening;
+    private FragmentServerBinding binding;
 
     public ServerFragment() {
     }
@@ -58,15 +56,10 @@ public class ServerFragment extends Fragment implements ServerView, View.OnClick
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_server, container, false);
+        binding = FragmentServerBinding.inflate(inflater);
         ServerConfiguration config = new ServerConfiguration((WifiManager) Objects.requireNonNull(getActivity()).getApplicationContext().getSystemService(Context.WIFI_SERVICE));
         mPresenter = new ServerPresenterImpl(this, new ServerInteractorImpl(getActivity(), mConnection), config);
-        btnListening = rootView.findViewById(R.id.btnStart);
-        btnListening.setOnClickListener(this);
-        tvWaiting = rootView.findViewById(R.id.tvWaiting);
-        tvAddress = rootView.findViewById(R.id.tvAddress);
-        tvWifiSSID = rootView.findViewById(R.id.tvWifiSSID);
-        return rootView;
+        return binding.getRoot();
     }
 
     @Override
@@ -88,24 +81,30 @@ public class ServerFragment extends Fragment implements ServerView, View.OnClick
     @Override
     public void hideListeningView() {
         isListening = false;
-        btnListening.setText(R.string.text_enable_rc_car_server);
+        binding.btnStart.setText(R.string.text_enable_rc_car_server);
     }
 
     @Override
     public void showListeningView() {
         isListening = true;
-        btnListening.setText(R.string.text_disable_rc_car_server);
+        binding.btnStart.setText(R.string.text_disable_rc_car_server);
     }
 
     @Override
     public void showAddress(String address) {
         String label = this.getResources().getString(R.string.ip_address);
-        tvAddress.setText(String.format("%s %s", label, address));
+        binding.tvAddress.setText(String.format("%s %s", label, address));
     }
 
     @Override
-    public void showSSID(String ssid) {
-        String label = this.getResources().getString(R.string.wifi_ssid);
-        tvWifiSSID.setText(String.format("%s %s", label, ssid));
+    public void showUdpPort(int tcpPort) {
+        String label = this.getResources().getString(R.string.udp_port);
+        binding.tvUdpPort.setText(String.format("%s %s", label, tcpPort));
+    }
+
+    @Override
+    public void showTcpPort(int tcpPort) {
+        String label = this.getResources().getString(R.string.tcp_port);
+        binding.tvTcpPort.setText(String.format("%s %s", label, tcpPort));
     }
 }

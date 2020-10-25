@@ -1,38 +1,50 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.github.gilz688.rccarclient.widget.ControlsSeekBar
-        android:id="@+id/horizontal_seek_bar_2"
+    <FrameLayout
+        android:id="@+id/vertical_seek_bar_wrapper"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="90dp"
-        android:paddingVertical="10dp"
-        android:progressDrawable="@drawable/progress"
-        android:thumb="@drawable/progress_thumb"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/vertical_seek_bar"
+        android:layout_height="0dp"
+        android:foregroundGravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/button_horn"
+        app:layout_constraintEnd_toStartOf="@+id/button_horn"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/button_theme"
+        app:layout_constraintTop_toBottomOf="@+id/button_theme">
 
+        <com.github.gilz688.rccarclient.widget.ControlsSeekBar
+            android:id="@+id/horizontal_seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foregroundGravity="center"
+            android:padding="40dp"
+            android:progressDrawable="@drawable/progress"
+            android:thumb="@drawable/progress_thumb" />
+    </FrameLayout>
 
-    <com.github.gilz688.rccarclient.widget.ControlsSeekBar
-        android:id="@+id/vertical_seek_bar"
+    <FrameLayout
+        android:id="@+id/horizontal_seek_bar_wrapper"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="110dp"
-        android:paddingVertical="10dp"
-        android:progressDrawable="@drawable/progress"
+        android:layout_height="0dp"
+        android:foregroundGravity="center"
         android:rotation="270"
-        android:thumb="@drawable/progress_thumb"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/toggle_accelerometer"
+        app:layout_constraintEnd_toStartOf="@+id/button_connect"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/horizontal_seek_bar_2"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/toggle_accelerometer"
+        app:layout_constraintTop_toBottomOf="@+id/button_connect">
+
+        <com.github.gilz688.rccarclient.widget.ControlsSeekBar
+            android:id="@+id/vertical_seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:progressDrawable="@drawable/progress"
+            android:padding="40dp"
+            android:thumb="@drawable/progress_thumb" />
+    </FrameLayout>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_theme"
@@ -43,9 +55,11 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:contentDescription="App Theme"
-        android:src="@drawable/ic_theme"
+        app:srcCompat="@drawable/ic_theme"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="10dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_connect"
@@ -56,9 +70,11 @@
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
         android:contentDescription="Connect"
-        android:src="@drawable/ic_connect"
+        app:srcCompat="@drawable/ic_connect"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_horn"
@@ -70,12 +86,13 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:contentDescription="Horn"
-        android:src="@drawable/ic_horn"
+        app:srcCompat="@drawable/ic_horn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/toggle_accelerometer"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_alignParentRight="true" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/toggle_accelerometer"
@@ -86,7 +103,7 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:contentDescription="Accelerometer"
-        android:src="@drawable/ic_accelerometer"
+        app:srcCompat="@drawable/ic_accelerometer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

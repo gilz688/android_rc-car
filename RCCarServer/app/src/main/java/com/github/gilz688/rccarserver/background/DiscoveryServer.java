@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-import com.github.gilz688.rccarserver.common.RCCommand;
-import com.github.gilz688.rccarserver.common.RCResponse;
+import com.github.gilz688.rccarserver.model.RCCommand;
+import com.github.gilz688.rccarserver.model.RCResponse;
 
 public class DiscoveryServer extends Thread {
 

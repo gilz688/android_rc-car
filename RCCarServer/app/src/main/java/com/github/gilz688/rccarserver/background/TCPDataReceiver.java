@@ -9,7 +9,7 @@ import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 
 import com.github.gilz688.rccarserver.R;
-import com.github.gilz688.rccarserver.common.RCCommand;
+import com.github.gilz688.rccarserver.model.RCCommand;
 
 public class TCPDataReceiver implements TCPServer.TCPServerListener{
     private static final String TAG = "TCPDataReceiver";
@@ -37,7 +37,7 @@ public class TCPDataReceiver implements TCPServer.TCPServerListener{
             Log.d(TAG,"cmd: " + cmd);
             switch (cmd.toLowerCase()){
                 case "move":
-                case "steer":
+                case "steer": {
                     Double param = (Double) command.getData("param");
                     int value = param.intValue();
                     try {
@@ -46,12 +46,16 @@ public class TCPDataReceiver implements TCPServer.TCPServerListener{
                         e.printStackTrace();
                     }
                     break;
-                case "horn":
-                    mp.start();
+                }
+                case "horn": {
+                    String param = (String) command.getData("param");
+                    if(param.equalsIgnoreCase("start")) {
+                        mp.start();
+                    } else if(param.equalsIgnoreCase("stop")) {
+                        mp.stop();
+                    }
                     break;
-                case "stop horn":
-
-                    break;
+                }
                 default:
             }
         } catch (JsonSyntaxException e){

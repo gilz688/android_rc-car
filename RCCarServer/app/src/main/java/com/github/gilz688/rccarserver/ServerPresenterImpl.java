@@ -32,7 +32,8 @@ public class ServerPresenterImpl implements ServerPresenter {
     @Override
     public void onStart(){
         mView.showAddress(mConfiguration.getWifiIpAddress());
-        mView.showSSID(mConfiguration.getWifiSSID());
+        mView.showUdpPort(mConfiguration.getUdpPort());
+        mView.showTcpPort(mConfiguration.getTcpPort());
         if(mInteractor.isRCServiceEnabled())
             mView.showListeningView();
         else
