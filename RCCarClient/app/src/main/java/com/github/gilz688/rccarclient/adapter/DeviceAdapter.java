@@ -1,4 +1,4 @@
-package com.github.gilz688.rccarclient.ui.dialogs.device;
+package com.github.gilz688.rccarclient.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;

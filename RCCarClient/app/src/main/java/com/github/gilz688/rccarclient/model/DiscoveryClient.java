@@ -11,26 +11,26 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
 
-public class DiscoveryClient{
+public class DiscoveryClient {
     private static final String TAG = "DiscoveryClient";
     public static final int DEFAULT_TIMEOUT = 10000;
     public static final int DEFAULT_PORT = 19876;
 
-    private OnServerFoundListener mListener;
+    private DiscoveryClientListener mListener;
     private final InetAddress broadcastAddress;
+    private final int discoveryPort;
     private int timeout;
-    private int discoveryServerPort;
-    private int discoveryClientPort;
+    private boolean found;
 
-    public DiscoveryClient(InetAddress broadcastAddress){
+
+    public DiscoveryClient(int discoveryPort, InetAddress broadcastAddress){
         this.broadcastAddress = broadcastAddress;
         this.timeout = DEFAULT_TIMEOUT;
-        this.discoveryClientPort = DEFAULT_PORT;
-        this.discoveryServerPort = DEFAULT_PORT;
+        this.discoveryPort = discoveryPort;
     }
 
-    public void setOnServerFoundListener(OnServerFoundListener onServerFoundListener) {
-        this.mListener = onServerFoundListener;
+    public void setOnServerFoundListener(DiscoveryClientListener discoveryClientListener) {
+        this.mListener = discoveryClientListener;
     }
 
     /**
@@ -39,16 +39,18 @@ public class DiscoveryClient{
      * @throws IOException
      */
     public void startDiscovery() throws IOException{
+        mListener.onDiscoveryStarted();
         DatagramSocket socket = new DatagramSocket(null);
         socket.setReuseAddress(true);
         socket.setBroadcast(true);
         socket.setSoTimeout(timeout);
-        socket.bind(new InetSocketAddress(discoveryClientPort));
+        socket.bind(new InetSocketAddress(discoveryPort));
         int i = 0;
-        do{
+        do {
             sendDiscoveryRequest(socket);
         } while (!listenForResponses(socket) && i++ < 3);
         socket.close();
+        if(!found) mListener.onDiscoveryFailed();
     }
 
     /**
@@ -59,7 +61,7 @@ public class DiscoveryClient{
      * @throws IOException
      */
     public boolean listenForResponses(DatagramSocket socket) throws IOException {
-        boolean found = false;
+        found = false;
         byte[] buf = new byte[1024];
 
         try {
@@ -104,18 +106,9 @@ public class DiscoveryClient{
         String data = discoveryCommand.getJson();
 
         DatagramPacket packet = new DatagramPacket(data.getBytes(), data.length(),
-                broadcastAddress, discoveryServerPort);
+                broadcastAddress, discoveryPort);
         socket.send(packet);
     }
-
-    public void setDiscoveryClientPort(int discoveryPort) {
-        this.discoveryClientPort = discoveryPort;
-    }
-
-    public void setDiscoveryServerPort(int discoveryPort) {
-        this.discoveryServerPort = discoveryPort;
-    }
-
 
     public void setTimeout(int timeout) {
         this.timeout = timeout;
@@ -125,7 +118,9 @@ public class DiscoveryClient{
         return timeout;
     }
 
-    public interface OnServerFoundListener {
-        public void onServerFound(String serverName, InetAddress serverAddress, int serverPort);
+    public interface DiscoveryClientListener {
+        void onDiscoveryStarted();
+        void onServerFound(String serverName, InetAddress serverAddress, int serverPort);
+        void onDiscoveryFailed();
     }
 }

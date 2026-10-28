@@ -7,21 +7,27 @@
         android:id="@+id/vertical_seek_bar_wrapper"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_margin="25dp"
         android:foregroundGravity="center"
+        android:background="@drawable/joystick_horizontal"
         app:layout_constraintBottom_toTopOf="@+id/button_horn"
         app:layout_constraintEnd_toStartOf="@+id/button_horn"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button_theme"
         app:layout_constraintTop_toBottomOf="@+id/button_theme">
 
-        <com.github.gilz688.rccarclient.widget.ControlsSeekBar
-            android:id="@+id/horizontal_seek_bar"
+        <com.jmedeisis.bugstick.Joystick
+            app:force_square="true"
+            android:id="@+id/horizontal_joystick"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:foregroundGravity="center"
-            android:padding="40dp"
-            android:progressDrawable="@drawable/progress"
-            android:thumb="@drawable/progress_thumb" />
+            app:motion_constraint="Horizontal">
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/joystick_handle"/>
+        </com.jmedeisis.bugstick.Joystick>
     </FrameLayout>
 
     <FrameLayout
@@ -29,20 +35,26 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:foregroundGravity="center"
-        android:rotation="270"
         app:layout_constraintBottom_toTopOf="@+id/toggle_accelerometer"
         app:layout_constraintEnd_toStartOf="@+id/button_connect"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/toggle_accelerometer"
         app:layout_constraintTop_toBottomOf="@+id/button_connect">
 
-        <com.github.gilz688.rccarclient.widget.ControlsSeekBar
-            android:id="@+id/vertical_seek_bar"
+        <com.jmedeisis.bugstick.Joystick
+            android:id="@+id/vertical_joystick"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:progressDrawable="@drawable/progress"
-            android:padding="40dp"
-            android:thumb="@drawable/progress_thumb" />
+            android:layout_margin="25dp"
+            android:background="@drawable/joystick_vertical"
+            app:force_square="true"
+            app:motion_constraint="Vertical">
+
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/joystick_handle" />
+        </com.jmedeisis.bugstick.Joystick>
     </FrameLayout>
 
 

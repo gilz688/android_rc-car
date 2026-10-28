@@ -1,4 +1,4 @@
-package com.github.gilz688.rccarclient.ui.dialogs.theme;
+package com.github.gilz688.rccarclient.view;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -15,7 +15,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class ThemeDialog extends DialogFragment {
+public class ThemeDialogFragment extends DialogFragment {
     public static final String TAG = "SelectThemeDialog";
     public static final String PREF_NAME = "SharedPrefs";
     public static final String PREF_KEY_APP_THEME = "appTheme";

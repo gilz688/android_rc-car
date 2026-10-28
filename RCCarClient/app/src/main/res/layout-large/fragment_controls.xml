@@ -10,14 +10,14 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.github.gilz688.rccarclient.widget.ControlsSeekBar
-            android:id="@+id/horizontal_seek_bar"
+            android:id="@+id/horizontal_joystick"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="25dp"
             android:paddingHorizontal="40dp"
             android:paddingVertical="40dp"
-            android:progressDrawable="@drawable/progress"
-            android:thumb="@drawable/progress_thumb"
+            android:progressDrawable="@drawable/joystick_vertical"
+            android:thumb="@drawable/joystick_handle"
             app:layout_constraintBottom_toTopOf="@+id/button_horn"
             app:layout_constraintEnd_toStartOf="@+id/button_horn"
             app:layout_constraintHorizontal_bias="0.5"
@@ -26,15 +26,15 @@
 
 
         <com.github.gilz688.rccarclient.widget.ControlsSeekBar
-            android:id="@+id/vertical_seek_bar"
+            android:id="@+id/vertical_joystick"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="25dp"
             android:paddingHorizontal="40dp"
             android:paddingVertical="40dp"
-            android:progressDrawable="@drawable/progress"
+            android:progressDrawable="@drawable/joystick_vertical"
             android:rotation="270"
-            android:thumb="@drawable/progress_thumb"
+            android:thumb="@drawable/joystick_handle"
             app:layout_constraintBottom_toTopOf="@+id/toggle_accelerometer"
             app:layout_constraintEnd_toStartOf="@+id/button_connect"
             app:layout_constraintStart_toEndOf="@+id/toggle_accelerometer"

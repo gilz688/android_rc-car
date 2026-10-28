@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/card_view_device"
-    android:background="@color/deviceItemColor">
+    android:backgroundTint="@color/deviceItemColor">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,11 +16,8 @@
         android:layout_height="80dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
         android:gravity="center_vertical"
-        android:scaleType="center"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="0dp" />
+        android:scaleType="center" />
 
     <TextView
         android:id="@+id/tvDeviceName"
@@ -29,8 +26,7 @@
         android:layout_toEndOf="@+id/ivDeviceIcon"
         android:gravity="center_horizontal|bottom"
         android:text="Unknown Device"
-        android:textAppearance="?android:textAppearanceMedium"
-        android:layout_toRightOf="@+id/ivDeviceIcon" />
+        android:textAppearance="?android:textAppearanceMedium" />
 
     <TextView
         android:id="@+id/tvIpAddress"
@@ -40,9 +36,7 @@
         android:text="127.0.0.1"
         android:textAppearance="?android:textAppearanceSmall"
         android:layout_below="@+id/tvDeviceName"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_toRightOf="@+id/ivDeviceIcon"
         android:layout_toEndOf="@+id/ivDeviceIcon" />
     </RelativeLayout>
 </com.google.android.material.card.MaterialCardView>

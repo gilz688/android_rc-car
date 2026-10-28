@@ -1,10 +1,7 @@
-package com.github.gilz688.rccarclient.ui.dialogs.device;
+package com.github.gilz688.rccarclient.view;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,31 +13,30 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.github.gilz688.rccarclient.R;
+import com.github.gilz688.rccarclient.RCCarClientApplication;
 import com.github.gilz688.rccarclient.databinding.FragmentDeviceBinding;
-import com.github.gilz688.rccarclient.discovery.DiscoveryBroadcastReceiver;
-import com.github.gilz688.rccarclient.discovery.DiscoveryService;
+import com.github.gilz688.rccarclient.inject.RCCarComponent;
 import com.github.gilz688.rccarclient.model.Device;
+import com.github.gilz688.rccarclient.adapter.DeviceAdapter;
+import com.github.gilz688.rccarclient.viewmodel.DeviceDialogViewModel;
 import com.github.gilz688.rccarclient.util.Event;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.util.Objects;
-
-public class DeviceDialog extends DialogFragment implements DeviceAdapter.OnItemClickListener {
+public class DeviceDialogFragment extends DialogFragment implements DeviceAdapter.OnItemClickListener {
 
     public static final String TAG = "SelectDevice";
 
     private FragmentDeviceBinding binding;
-    private DeviceViewModel viewModel;
+    private DeviceDialogViewModel viewModel;
 
     // handler for received Intents for the "server_discovery" event
     BroadcastReceiver mMessageReceiver;
 
     DeviceDialogListener mListener;
 
-    public DeviceDialog(DeviceDialogListener listener) {
+    public DeviceDialogFragment(DeviceDialogListener listener) {
         mListener = listener;
     }
 
@@ -52,6 +48,12 @@ public class DeviceDialog extends DialogFragment implements DeviceAdapter.OnItem
                 R.style.MyRounded_MaterialComponents_MaterialAlertDialog
         );
 
+        // Inject the View Model
+        viewModel = new ViewModelProvider(this).get(DeviceDialogViewModel.class);
+        RCCarComponent component = ((RCCarClientApplication) requireActivity().getApplication()).getComponent();
+        component.inject(viewModel);
+
+        // Initialize View Binding
         LayoutInflater layoutInflater = requireActivity().getLayoutInflater();
         binding = FragmentDeviceBinding.inflate(layoutInflater);
         builder.setView(binding.getRoot());
@@ -62,7 +64,7 @@ public class DeviceDialog extends DialogFragment implements DeviceAdapter.OnItem
         setCancelable(true);
 
         // Start device discovery
-        startDiscovery();
+        viewModel.startDiscovery();
 
         return builder.create();
     }
@@ -70,8 +72,7 @@ public class DeviceDialog extends DialogFragment implements DeviceAdapter.OnItem
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        viewModel = new ViewModelProvider(this).get(DeviceViewModel.class);
-        mMessageReceiver = new DiscoveryBroadcastReceiver(viewModel);
+        viewModel = new ViewModelProvider(this).get(DeviceDialogViewModel.class);
 
         // Configure recycler view
         final DeviceAdapter mAdapter = new DeviceAdapter();
@@ -96,17 +97,11 @@ public class DeviceDialog extends DialogFragment implements DeviceAdapter.OnItem
             }
         });
 
-        // Observe when error is received
-        viewModel.getErrorData().observe(lifecycleOwner, (event) -> {
-            String error = event.getContentIfNotHandledOrReturnNull();
-            binding.tvErrorMessage.setText(error);
-        });
-
         return binding.getRoot();
     }
 
-    private void handleStateChange(Event<DeviceViewModel.DeviceViewState> event) {
-        DeviceViewModel.DeviceViewState state = event.getContentIfNotHandledOrReturnNull();
+    private void handleStateChange(Event<DeviceDialogViewModel.DeviceViewState> event) {
+        DeviceDialogViewModel.DeviceViewState state = event.getContentIfNotHandledOrReturnNull();
         if (state == null) return;
 
         boolean showLoader = false;
@@ -137,41 +132,6 @@ public class DeviceDialog extends DialogFragment implements DeviceAdapter.OnItem
         mListener.onDeviceSelected(device);
 
         dismiss();
-    }
-
-    public void registerDiscoveryReceiver() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(DiscoveryService.ACTION_DISCOVERY_SERVER_FOUND);
-        filter.addAction(DiscoveryService.ACTION_DISCOVERY_CLIENT_STARTED);
-        filter.addAction(DiscoveryService.ACTION_DISCOVERY_CLIENT_ENDED);
-        filter.addAction(DiscoveryService.ACTION_DISCOVERY_CLIENT_ERROR);
-        filter.addAction(DiscoveryService.ACTION_DISCOVERY_SERVER_NOT_FOUND);
-        filter.addAction(DiscoveryService.ACTION_WIFI_OFF);
-        LocalBroadcastManager.getInstance(Objects.requireNonNull(getActivity())).registerReceiver(mMessageReceiver,
-                filter);
-    }
-
-    public void unRegisterDiscoveryReceiver() {
-        LocalBroadcastManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).unregisterReceiver(mMessageReceiver);
-    }
-
-    public void startDiscovery() {
-        Activity activity = requireActivity();
-        Intent intent = new Intent(activity, DiscoveryService.class);
-        intent.setAction(DiscoveryService.INTENT_START_DISCOVERY);
-        activity.startService(intent);
-    }
-
-    @Override
-    public void onResume() {
-        registerDiscoveryReceiver();
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        unRegisterDiscoveryReceiver();
-        super.onPause();
     }
 
     public interface DeviceDialogListener {
