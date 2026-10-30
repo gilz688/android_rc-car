@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="deviceItemColor">#484848</color>
+    <color name="deviceItemColor">#1A2234</color>
+    <color name="cockpit_bg">#070A10</color>
+    <color name="cockpit_surface">#0F1522</color>
+    <color name="cockpit_surface_elevated">#172033</color>
 </resources>

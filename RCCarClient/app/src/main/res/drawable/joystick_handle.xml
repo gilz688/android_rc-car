@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-
-    <solid
-        android:color="@color/primary"/>
-
-    <size
-        android:width="100dp"
-        android:height="100dp"/>
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outer neon ring -->
+    <item>
+        <shape android:shape="oval">
+            <stroke android:width="3dp" android:color="@color/primary" />
+            <solid android:color="#26354D" />
+            <size android:width="80dp" android:height="80dp" />
+        </shape>
+    </item>
+    <!-- Inner grip button -->
+    <item android:top="8dp" android:bottom="8dp" android:left="8dp" android:right="8dp">
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="40dp"
+                android:startColor="#3E5478"
+                android:endColor="#182333" />
+            <stroke android:width="1dp" android:color="#58739E" />
+        </shape>
+    </item>
+    <!-- Center tactile dot -->
+    <item android:top="32dp" android:bottom="32dp" android:left="32dp" android:right="32dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/primary" />
+        </shape>
+    </item>
+</layer-list>

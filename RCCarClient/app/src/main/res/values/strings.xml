@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">WiFi RC Car Remote</string>
     <string name="action_refresh">Refresh</string>
 
@@ -8,8 +7,23 @@
     <string name="error_wifi_off">Wi-Fi needs to be on to connect to RC Car Server.</string>
     <string name="error_io_exception">Wi-Fi network is unreachable. RC Car Client cannot find the RC Car Server.</string>
 
-    <string name= "toggle_accelerometer_off"> Turn On Accelerometer</string>
-    <string name= "toggle_accelerometer_on"> Turn Off Accelerometer</string>
+    <string name="toggle_accelerometer_off">Turn On Accelerometer</string>
+    <string name="toggle_accelerometer_on">Turn Off Accelerometer</string>
     <string name="text_app_theme">Select App Theme</string>
 
+    <!-- Cockpit & Control Settings -->
+    <string name="controls_settings_title">Controls Customization</string>
+    <string name="controls_hand_swap_title">Swap Left / Right Controls</string>
+    <string name="controls_hand_swap_desc">Switch throttle and steering hands</string>
+    <string name="controls_mode_title">Control Input Mode</string>
+    <string name="controls_mode_joystick">Dual Joysticks</string>
+    <string name="controls_mode_seekbar">Sliders / SeekBars</string>
+    <string name="controls_mode_accelerometer">Tilt (Accelerometer)</string>
+    <string name="controls_invert_throttle">Invert Throttle (Forward/Reverse)</string>
+    <string name="controls_invert_steering">Invert Steering (Left/Right)</string>
+    <string name="controls_throttle_label">THROTTLE</string>
+    <string name="controls_steering_label">STEERING</string>
+    <string name="status_disconnected">DISCONNECTED</string>
+    <string name="status_connected">CONNECTED</string>
+    <string name="horn_label">HORN</string>
 </resources>

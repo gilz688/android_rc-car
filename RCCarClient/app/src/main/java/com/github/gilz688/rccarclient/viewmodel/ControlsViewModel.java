@@ -1,5 +1,7 @@
 package com.github.gilz688.rccarclient.viewmodel;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
 import androidx.lifecycle.MutableLiveData;
@@ -9,23 +11,21 @@ import com.github.gilz688.rccarclient.R;
 import com.github.gilz688.rccarclient.api.RCCarService;
 import com.github.gilz688.rccarclient.inject.RCCarComponent;
 import com.github.gilz688.rccarclient.interact.SensorInteractor;
+import com.github.gilz688.rccarclient.model.ControlsConfig;
 import com.github.gilz688.rccarclient.model.Device;
 import com.github.gilz688.rccarclient.model.RCCommand;
+import com.github.gilz688.rccarclient.util.ControlsPreferences;
 import com.github.gilz688.rccarclient.util.Event;
 import com.github.gilz688.rccarclient.view.DeviceDialogFragment;
-import com.tinder.scarlet.Scarlet;
-import com.tinder.scarlet.messageadapter.moshi.MoshiMessageAdapter;
-import com.tinder.scarlet.streamadapter.rxjava2.RxJava2StreamAdapterFactory;
-import com.tinder.scarlet.websocket.okhttp.OkHttpClientUtils;
-
-import okhttp3.OkHttpClient;
 
 public class ControlsViewModel extends ViewModel implements DeviceDialogFragment.DeviceDialogListener {
     private RCCarService rcCarService;
+    private ControlsPreferences controlsPreferences;
 
     public enum Action {
         SHOW_CONNECT_DIALOG,
         SHOW_THEME_DIALOG,
+        SHOW_CONTROL_SETTINGS_DIALOG,
         VIBRATE
     }
 
@@ -41,18 +41,99 @@ public class ControlsViewModel extends ViewModel implements DeviceDialogFragment
     // LiveData
     private final MutableLiveData<Device> deviceData = new MutableLiveData<>();
     private final MutableLiveData<Event<Action>> actionData = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> connectedData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> connectedData = new MutableLiveData<>(false);
     private final MutableLiveData<Integer> fabConnectColorData = new MutableLiveData<>(R.color.gray);
     private final MutableLiveData<Boolean> enHorizontalJoystick = new MutableLiveData<>(false);
     private final MutableLiveData<Integer> fabAccelerometerColor = new MutableLiveData<>(R.color.accent);
-    private final MutableLiveData<Integer> verticalValue = new MutableLiveData<>();
-    private final MutableLiveData<Integer> horizontalValue = new MutableLiveData<>();
+    private final MutableLiveData<Integer> verticalValue = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> horizontalValue = new MutableLiveData<>(0);
+    private final MutableLiveData<ControlsConfig> controlsConfig = new MutableLiveData<>(new ControlsConfig());
     private LiveData<Integer> currentSensorReading;
 
     public void inject(RCCarComponent component) {
         sensorInteractor = new SensorInteractor(MINIMUM_ANGLE, MAXIMUM_ANGLE);
         component.inject(sensorInteractor);
         currentSensorReading = LiveDataReactiveStreams.fromPublisher(sensorInteractor.getLiveReading());
+    }
+
+    public void initPreferences(Context context) {
+        if (controlsPreferences == null) {
+            controlsPreferences = new ControlsPreferences(context);
+            controlsConfig.setValue(controlsPreferences.loadConfig());
+        }
+    }
+
+    public LiveData<ControlsConfig> getControlsConfig() {
+        return controlsConfig;
+    }
+
+    public void setHandSwap(boolean handSwap) {
+        ControlsConfig cur = controlsConfig.getValue();
+        if (cur != null && cur.isHandSwap() != handSwap) {
+            cur.setHandSwap(handSwap);
+            controlsConfig.setValue(cur);
+            if (controlsPreferences != null) {
+                controlsPreferences.saveConfig(cur);
+            }
+            vibrate();
+        }
+    }
+
+    public void setControlMode(ControlsConfig.ControlMode mode) {
+        ControlsConfig cur = controlsConfig.getValue();
+        if (cur != null && cur.getControlMode() != mode) {
+            cur.setControlMode(mode);
+            controlsConfig.setValue(cur);
+            if (controlsPreferences != null) {
+                controlsPreferences.saveConfig(cur);
+            }
+            if (mode == ControlsConfig.ControlMode.ACCELEROMETER) {
+                enableAccelerometer();
+            } else {
+                disableAccelerometer();
+            }
+            vibrate();
+        }
+    }
+
+    public void setInvertThrottle(boolean invert) {
+        ControlsConfig cur = controlsConfig.getValue();
+        if (cur != null && cur.isInvertThrottle() != invert) {
+            cur.setInvertThrottle(invert);
+            controlsConfig.setValue(cur);
+            if (controlsPreferences != null) {
+                controlsPreferences.saveConfig(cur);
+            }
+            vibrate();
+        }
+    }
+
+    public void setInvertSteering(boolean invert) {
+        ControlsConfig cur = controlsConfig.getValue();
+        if (cur != null && cur.isInvertSteering() != invert) {
+            cur.setInvertSteering(invert);
+            controlsConfig.setValue(cur);
+            if (controlsPreferences != null) {
+                controlsPreferences.saveConfig(cur);
+            }
+            vibrate();
+        }
+    }
+
+    public void onThrottleInput(int value) {
+        ControlsConfig config = controlsConfig.getValue();
+        int finalValue = (config != null && config.isInvertThrottle()) ? -value : value;
+        verticalValue.setValue(clamp(finalValue, MINIMUM_SPEED, MAXIMUM_SPEED));
+    }
+
+    public void onSteeringInput(int value) {
+        ControlsConfig config = controlsConfig.getValue();
+        int finalValue = (config != null && config.isInvertSteering()) ? -value : value;
+        horizontalValue.setValue(clamp(finalValue, MINIMUM_ANGLE, MAXIMUM_ANGLE));
+    }
+
+    private int clamp(int val, int min, int max) {
+        return Math.max(min, Math.min(max, val));
     }
 
     public MutableLiveData<Event<Action>> getActionData() {
@@ -96,6 +177,11 @@ public class ControlsViewModel extends ViewModel implements DeviceDialogFragment
         actionData.setValue(new Event<>(Action.SHOW_THEME_DIALOG));
     }
 
+    public void onClickSettingsButton() {
+        vibrate();
+        actionData.setValue(new Event<>(Action.SHOW_CONTROL_SETTINGS_DIALOG));
+    }
+
     public void onClickConnectButton() {
         vibrate();
         actionData.setValue(new Event<>(Action.SHOW_CONNECT_DIALOG));
@@ -126,20 +212,26 @@ public class ControlsViewModel extends ViewModel implements DeviceDialogFragment
 
     private void enableAccelerometer() {
         enHorizontalJoystick.postValue(true);
-        sensorInteractor.enable();
-        currentSensorReading = LiveDataReactiveStreams.fromPublisher(sensorInteractor.getLiveReading());
+        if (sensorInteractor != null) {
+            sensorInteractor.enable();
+            currentSensorReading = LiveDataReactiveStreams.fromPublisher(sensorInteractor.getLiveReading());
+        }
     }
 
     private void disableAccelerometer() {
         enHorizontalJoystick.postValue(false);
-        sensorInteractor.disable();
+        if (sensorInteractor != null) {
+            sensorInteractor.disable();
+        }
     }
 
     public void onDeviceConnected() {
+        connectedData.postValue(true);
         fabConnectColorData.postValue(R.color.accent);
     }
 
     public void onDeviceDisconnected() {
+        connectedData.postValue(false);
         fabConnectColorData.postValue(R.color.gray);
     }
 
@@ -150,5 +242,6 @@ public class ControlsViewModel extends ViewModel implements DeviceDialogFragment
     @Override
     public void onDeviceSelected(Device device) {
         deviceData.setValue(device);
+        onDeviceConnected();
     }
 }

@@ -1,123 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/cockpit_bg"
+    android:padding="20dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- TOP COCKPIT TELEMETRY & ACTION HUD -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/hud_top_bar"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/cockpit_surface"
+        app:cardCornerRadius="16dp"
+        app:strokeColor="@color/cockpit_border"
+        app:strokeWidth="1dp"
+        app:cardElevation="2dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <com.github.gilz688.rccarclient.widget.ControlsSeekBar
-            android:id="@+id/horizontal_joystick"
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="25dp"
-            android:paddingHorizontal="40dp"
-            android:paddingVertical="40dp"
-            android:progressDrawable="@drawable/joystick_vertical"
-            android:thumb="@drawable/joystick_handle"
-            app:layout_constraintBottom_toTopOf="@+id/button_horn"
-            app:layout_constraintEnd_toStartOf="@+id/button_horn"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/button_theme"
-            app:layout_constraintTop_toBottomOf="@+id/button_theme" />
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="12dp">
 
+            <!-- Connection Status Indicator -->
+            <View
+                android:id="@+id/status_led"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:background="@drawable/joystick_handle"
+                android:backgroundTint="@color/gray"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-        <com.github.gilz688.rccarclient.widget.ControlsSeekBar
-            android:id="@+id/vertical_joystick"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="25dp"
-            android:paddingHorizontal="40dp"
-            android:paddingVertical="40dp"
-            android:progressDrawable="@drawable/joystick_vertical"
-            android:rotation="270"
-            android:thumb="@drawable/joystick_handle"
-            app:layout_constraintBottom_toTopOf="@+id/toggle_accelerometer"
-            app:layout_constraintEnd_toStartOf="@+id/button_connect"
-            app:layout_constraintStart_toEndOf="@+id/toggle_accelerometer"
-            app:layout_constraintTop_toBottomOf="@+id/button_connect" />
+            <TextView
+                android:id="@+id/text_connection_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="@string/status_disconnected"
+                android:textColor="@color/cockpit_text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/status_led"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button_theme"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:contentDescription="App Theme"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_theme" />
+            <!-- Active Mode Badge -->
+            <TextView
+                android:id="@+id/text_control_mode_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/cockpit_surface_elevated"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp"
+                android:text="L: THROTTLE | R: STEERING"
+                android:textColor="@color/cockpit_cyan"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/text_connection_status"
+                app:layout_constraintEnd_toStartOf="@id/actions_group"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button_connect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:contentDescription="Connect"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_connect" />
+            <!-- Quick Action Buttons -->
+            <LinearLayout
+                android:id="@+id/actions_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button_horn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:contentDescription="Horn"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
-            app:srcCompat="@drawable/ic_horn" />
+                <!-- Control Settings Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_settings"
+                    style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="8dp"
+                    app:icon="@drawable/ic_settings"
+                    app:iconTint="@color/cockpit_text_primary"
+                    app:backgroundTint="@color/cockpit_surface_elevated"
+                    android:contentDescription="Settings" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                <!-- Theme Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_theme"
+                    style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="8dp"
+                    app:icon="@drawable/ic_theme"
+                    app:iconTint="@color/cockpit_text_primary"
+                    app:backgroundTint="@color/cockpit_surface_elevated"
+                    android:contentDescription="Theme" />
+
+                <!-- Connect Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_connect"
+                    style="@style/Widget.Material3.Button.IconButton.Filled"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:icon="@drawable/ic_connect"
+                    app:iconTint="@color/black"
+                    app:backgroundTint="@color/cockpit_cyan"
+                    android:contentDescription="Connect" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- LEFT CONTROL ZONE (Swappable: Throttle or Steering) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/left_control_card"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="14dp"
+        android:layout_marginEnd="12dp"
+        app:cardBackgroundColor="@color/cockpit_surface"
+        app:cardCornerRadius="24dp"
+        app:strokeColor="@color/cockpit_border"
+        app:strokeWidth="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_center"
+        app:layout_constraintTop_toBottomOf="@id/hud_top_bar"
+        app:layout_constraintBottom_toTopOf="@id/bottom_action_bar">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/text_left_zone_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:text="@string/controls_throttle_label"
+                android:textColor="@color/cockpit_amber"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1" />
+
+            <FrameLayout
+                android:id="@+id/left_joystick_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/joystick_track_crosshair">
+
+                <com.jmedeisis.bugstick.Joystick
+                    android:id="@+id/left_joystick"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    app:force_square="true">
+
+                    <Button
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:background="@drawable/joystick_handle" />
+                </com.jmedeisis.bugstick.Joystick>
+            </FrameLayout>
+        </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- CENTER GUIDELINE -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <!-- RIGHT CONTROL ZONE (Swappable: Steering or Throttle) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/right_control_card"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="14dp"
+        android:layout_marginStart="12dp"
+        app:cardBackgroundColor="@color/cockpit_surface"
+        app:cardCornerRadius="24dp"
+        app:strokeColor="@color/cockpit_border"
+        app:strokeWidth="1dp"
+        app:layout_constraintStart_toEndOf="@+id/guideline_center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hud_top_bar"
+        app:layout_constraintBottom_toTopOf="@id/bottom_action_bar">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/text_right_zone_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:text="@string/controls_steering_label"
+                android:textColor="@color/cockpit_cyan"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1" />
+
+            <FrameLayout
+                android:id="@+id/right_joystick_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/joystick_track_crosshair">
+
+                <com.jmedeisis.bugstick.Joystick
+                    android:id="@+id/right_joystick"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    app:force_square="true">
+
+                    <Button
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:background="@drawable/joystick_handle" />
+                </com.jmedeisis.bugstick.Joystick>
+            </FrameLayout>
+        </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- BOTTOM ACTION BAR: HORN, QUICK SWAP & ACCELEROMETER TOGGLE -->
+    <LinearLayout
+        android:id="@+id/bottom_action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Tilt / Accelerometer Toggle -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/toggle_accelerometer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/button_horn"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="10dp"
-            android:contentDescription="Accelerometer"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline6"
-            app:srcCompat="@drawable/ic_accelerometer" />
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="12dp"
+            android:text="TILT STEERING"
+            android:textColor="@color/cockpit_text_primary"
+            app:icon="@drawable/ic_accelerometer"
+            app:iconTint="@color/cockpit_cyan"
+            app:backgroundTint="@color/cockpit_surface"
+            app:strokeColor="@color/cockpit_border"
+            app:strokeWidth="1dp"
+            app:cornerRadius="14dp" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.5" />
+        <!-- RACING HORN (Center, Prominent) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_horn"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1.6"
+            android:text="@string/horn_label"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            app:icon="@drawable/ic_horn"
+            app:iconTint="@color/white"
+            app:backgroundTint="@color/cockpit_red"
+            app:cornerRadius="14dp" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="460dp" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_end="460dp" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Quick Hand Swap Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_quick_swap"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:text="SWAP HANDS"
+            android:textColor="@color/cockpit_text_primary"
+            app:icon="@drawable/ic_swap"
+            app:iconTint="@color/cockpit_amber"
+            app:backgroundTint="@color/cockpit_surface"
+            app:strokeColor="@color/cockpit_border"
+            app:strokeWidth="1dp"
+            app:cornerRadius="14dp" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

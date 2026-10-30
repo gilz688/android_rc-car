@@ -1,4 +1,4 @@
- package com.github.gilz688.rccarclient.view;
+package com.github.gilz688.rccarclient.view;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,11 +23,13 @@ import com.github.gilz688.rccarclient.R;
 import com.github.gilz688.rccarclient.RCCarClientApplication;
 import com.github.gilz688.rccarclient.databinding.FragmentControlsBinding;
 import com.github.gilz688.rccarclient.inject.RCCarComponent;
-import com.github.gilz688.rccarclient.widget.ControlsSeekBar;
+import com.github.gilz688.rccarclient.model.ControlsConfig;
+import com.github.gilz688.rccarclient.model.Device;
 import com.github.gilz688.rccarclient.viewmodel.ControlsViewModel;
 import com.jmedeisis.bugstick.JoystickListener;
 
- public class ControlsFragment extends Fragment {
+public class ControlsFragment extends Fragment {
+    private static final String TAG = "ControlsFragment";
     private FragmentControlsBinding binding;
     private ControlsViewModel viewModel;
 
@@ -45,8 +46,9 @@ import com.jmedeisis.bugstick.JoystickListener;
 
         // Configure the sensor manager and pass to the View Model
         RCCarComponent component = ((RCCarClientApplication) requireActivity().getApplication()).getComponent();
-        Log.d("ControlsFragment", "inject()");
+        Log.d(TAG, "inject()");
         viewModel.inject(component);
+        viewModel.initPreferences(requireContext());
 
         // Initialize View Binding class
         binding = FragmentControlsBinding.bind(view);
@@ -56,51 +58,153 @@ import com.jmedeisis.bugstick.JoystickListener;
     }
 
     private void setupViews() {
-        // Configure pass button click events to ViewModel
-        binding.buttonTheme.setOnClickListener((button) -> viewModel.onClickThemeButton());
-        binding.buttonConnect.setOnClickListener((button) -> viewModel.onClickConnectButton());
-        binding.toggleAccelerometer.setOnClickListener((button) -> viewModel.onClickAccelerometerButton());
+        // Quick Action buttons
+        binding.buttonSettings.setOnClickListener(v -> viewModel.onClickSettingsButton());
+        binding.buttonTheme.setOnClickListener(v -> viewModel.onClickThemeButton());
+        binding.buttonConnect.setOnClickListener(v -> viewModel.onClickConnectButton());
+
+        // Quick Hand Swap toggle
+        binding.buttonQuickSwap.setOnClickListener(v -> {
+            ControlsConfig cfg = viewModel.getControlsConfig().getValue();
+            boolean newSwap = (cfg == null || !cfg.isHandSwap());
+            viewModel.setHandSwap(newSwap);
+        });
+
+        // Accelerometer toggle
+        binding.toggleAccelerometer.setOnClickListener(v -> viewModel.onClickAccelerometerButton());
+
+        // Horn with touch listener for press and release
         binding.buttonHorn.setOnTouchListener((v, event) -> {
-            switch(event.getAction()) {
+            switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     viewModel.onPressHornButton();
+                    binding.buttonHorn.setBackgroundTintList(ColorStateList.valueOf(
+                            ContextCompat.getColor(requireContext(), R.color.cockpit_amber)));
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     viewModel.onReleaseHornButton();
+                    binding.buttonHorn.setBackgroundTintList(ColorStateList.valueOf(
+                            ContextCompat.getColor(requireContext(), R.color.cockpit_red)));
                     break;
             }
             return false;
+        });
+
+        // Left Joystick Listener
+        binding.leftJoystick.setJoystickListener(new JoystickListener() {
+            @Override
+            public void onDown() {
+                viewModel.vibrate();
+            }
+
+            @Override
+            public void onDrag(float degrees, float offset) {
+                ControlsConfig cfg = viewModel.getControlsConfig().getValue();
+                boolean swapped = (cfg != null && cfg.isHandSwap());
+                double rad = Math.toRadians(degrees);
+                float x = (float) (offset * Math.cos(rad));
+                float y = (float) (offset * Math.sin(rad));
+
+                if (swapped) {
+                    // Left controls Steering
+                    viewModel.onSteeringInput(Math.round(x * ControlsViewModel.MAXIMUM_ANGLE));
+                } else {
+                    // Left controls Throttle
+                    viewModel.onThrottleInput(Math.round(y * ControlsViewModel.MAXIMUM_SPEED));
+                }
+            }
+
+            @Override
+            public void onUp() {
+                ControlsConfig cfg = viewModel.getControlsConfig().getValue();
+                boolean swapped = (cfg != null && cfg.isHandSwap());
+                if (swapped) {
+                    viewModel.onSteeringInput(0);
+                } else {
+                    viewModel.onThrottleInput(0);
+                }
+            }
+        });
+
+        // Right Joystick Listener
+        binding.rightJoystick.setJoystickListener(new JoystickListener() {
+            @Override
+            public void onDown() {
+                viewModel.vibrate();
+            }
+
+            @Override
+            public void onDrag(float degrees, float offset) {
+                ControlsConfig cfg = viewModel.getControlsConfig().getValue();
+                boolean swapped = (cfg != null && cfg.isHandSwap());
+                double rad = Math.toRadians(degrees);
+                float x = (float) (offset * Math.cos(rad));
+                float y = (float) (offset * Math.sin(rad));
+
+                if (swapped) {
+                    // Right controls Throttle
+                    viewModel.onThrottleInput(Math.round(y * ControlsViewModel.MAXIMUM_SPEED));
+                } else {
+                    // Right controls Steering
+                    viewModel.onSteeringInput(Math.round(x * ControlsViewModel.MAXIMUM_ANGLE));
+                }
+            }
+
+            @Override
+            public void onUp() {
+                ControlsConfig cfg = viewModel.getControlsConfig().getValue();
+                boolean swapped = (cfg != null && cfg.isHandSwap());
+                if (swapped) {
+                    viewModel.onThrottleInput(0);
+                } else {
+                    viewModel.onSteeringInput(0);
+                }
+            }
         });
     }
 
     private void setupObservers() {
         LifecycleOwner viewLifecycleOwner = getViewLifecycleOwner();
 
+        // Observe controls configuration changes
+        viewModel.getControlsConfig().observe(viewLifecycleOwner, this::updateControlsUi);
+
         // Observe changes in device
-        viewModel.getDeviceData().observe(viewLifecycleOwner, value -> {
-            if(value == null) {
-                showToast("Disconnected from " + value.getName() + ".");
+        viewModel.getDeviceData().observe(viewLifecycleOwner, (Device device) -> {
+            if (device == null) {
+                binding.textConnectionStatus.setText(R.string.status_disconnected);
+                binding.statusLed.setBackgroundTintList(ColorStateList.valueOf(
+                        ContextCompat.getColor(requireContext(), R.color.gray)));
+                showToast("Disconnected from vehicle.");
             } else {
-                showToast("Connected to " + value.getName() + ".");
+                String label = device.getName() != null && !device.getName().isEmpty()
+                        ? device.getName()
+                        : getString(R.string.status_connected);
+                binding.textConnectionStatus.setText(label);
+                binding.statusLed.setBackgroundTintList(ColorStateList.valueOf(
+                        ContextCompat.getColor(requireContext(), R.color.cockpit_green)));
+                showToast("Connected to " + label + ".");
             }
         });
 
-        // Observe changes in connect button color
-        viewModel.getFabConnectColorData().observe(viewLifecycleOwner, value -> {
-            binding.buttonConnect.setBackgroundTintList(value != 0 ? ColorStateList.valueOf(ContextCompat.getColor(binding.buttonConnect.getContext(), value)) : null);
-        });
-
-        // Observe changes in accelerometer button color
-        viewModel.getFabAccelerometerColor().observe(viewLifecycleOwner, value -> {
-            binding.toggleAccelerometer.setBackgroundTintList(value != 0 ? ColorStateList.valueOf(ContextCompat.getColor(binding.toggleAccelerometer.getContext(), value)) : null);
+        // Observe connection state
+        viewModel.getConnectedData().observe(viewLifecycleOwner, (Boolean isConnected) -> {
+            int connectTint = isConnected
+                    ? ContextCompat.getColor(requireContext(), R.color.cockpit_green)
+                    : ContextCompat.getColor(requireContext(), R.color.cockpit_cyan);
+            binding.buttonConnect.setBackgroundTintList(ColorStateList.valueOf(connectTint));
         });
 
         // Observe events from view model
         viewModel.getActionData().observe(viewLifecycleOwner, event -> {
             ControlsViewModel.Action action = event.getContentIfNotHandledOrReturnNull();
-            if(action != null) {
+            if (action != null) {
                 switch (action) {
+                    case SHOW_CONTROL_SETTINGS_DIALOG:
+                        ControlSettingsDialogFragment.newInstance().show(
+                                getChildFragmentManager(), ControlSettingsDialogFragment.TAG);
+                        break;
                     case SHOW_THEME_DIALOG:
                         ThemeDialogFragment themeDialog = new ThemeDialogFragment();
                         themeDialog.show(requireActivity().getSupportFragmentManager(), ThemeDialogFragment.TAG);
@@ -111,37 +215,73 @@ import com.jmedeisis.bugstick.JoystickListener;
                         break;
                     case VIBRATE:
                         vibrate();
-                    default:
+                        break;
                 }
             }
         });
 
-        // Observe when accelerometer is enabled or disabled
-        viewModel.getEnHorizontalJoystick().observe(viewLifecycleOwner, (value) -> {
-            if(value == null) return;
-
-        });
-
-        // Observe reading from sensor is received
-        viewModel.getCurrentSensorReading().observe(getViewLifecycleOwner(), (value) -> {
-            //binding.horizontalJoystick.setProgressValue(value);
+        // Observe tilt / accelerometer sensor reading
+        viewModel.getCurrentSensorReading().observe(viewLifecycleOwner, (Integer value) -> {
+            if (value != null) {
+                viewModel.onSteeringInput(value);
+            }
         });
     }
 
-    private void vibrate() {
-        long vibrateTime = 100L;
-        Vibrator vibrator = (Vibrator) requireContext().getSystemService(Context.VIBRATOR_SERVICE);
-        if (Build.VERSION.SDK_INT >= 26) {
-            vibrator.vibrate(VibrationEffect.createOneShot(vibrateTime, VibrationEffect.DEFAULT_AMPLITUDE));
+    private void updateControlsUi(@NonNull ControlsConfig config) {
+        boolean swapped = config.isHandSwap();
+        if (swapped) {
+            binding.textLeftZoneLabel.setText(R.string.controls_steering_label);
+            binding.textLeftZoneLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.cockpit_cyan));
+            binding.textRightZoneLabel.setText(R.string.controls_throttle_label);
+            binding.textRightZoneLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.cockpit_amber));
+            binding.textControlModeBadge.setText("L: STEER | R: THROTTLE");
+            binding.buttonQuickSwap.setText("SWAPPED");
+            binding.buttonQuickSwap.setIconTint(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.cockpit_cyan)));
         } else {
-            vibrator.vibrate(vibrateTime);
+            binding.textLeftZoneLabel.setText(R.string.controls_throttle_label);
+            binding.textLeftZoneLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.cockpit_amber));
+            binding.textRightZoneLabel.setText(R.string.controls_steering_label);
+            binding.textRightZoneLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.cockpit_cyan));
+            binding.textControlModeBadge.setText("L: THROTTLE | R: STEER");
+            binding.buttonQuickSwap.setText("SWAP");
+            binding.buttonQuickSwap.setIconTint(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.cockpit_amber)));
+        }
+
+        if (config.getControlMode() == ControlsConfig.ControlMode.ACCELEROMETER) {
+            binding.toggleAccelerometer.setBackgroundTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.cockpit_cyan)));
+            binding.toggleAccelerometer.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
+        } else {
+            binding.toggleAccelerometer.setBackgroundTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.cockpit_surface)));
+            binding.toggleAccelerometer.setTextColor(ContextCompat.getColor(requireContext(), R.color.cockpit_text_primary));
+        }
+    }
+
+    private void vibrate() {
+        long vibrateTime = 50L;
+        Vibrator vibrator = (Vibrator) requireContext().getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator != null) {
+            if (Build.VERSION.SDK_INT >= 26) {
+                vibrator.vibrate(VibrationEffect.createOneShot(vibrateTime, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                vibrator.vibrate(vibrateTime);
+            }
         }
     }
 
     private void showToast(String message) {
-        Toast toast = Toast.makeText(requireContext(),
-                message, Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 0);
+        Toast toast = Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 80);
         toast.show();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

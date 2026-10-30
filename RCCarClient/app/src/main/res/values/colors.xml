@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary_dark">#E64A19</color>
-    <color name="primary_light">#ff7043</color>
-    <color name="primary">#FF5722</color>
+    <!-- Cockpit Brand Palette -->
+    <color name="primary_dark">#0091EA</color>
+    <color name="primary_light">#80D8FF</color>
+    <color name="primary">#00E5FF</color>
 
-    <color name="accent">#81C784</color >
-    <color name="accent_variant">#4DAE52</color >
+    <color name="accent">#FF9100</color>
+    <color name="accent_variant">#FF6D00</color>
 
-    <color name="white">#ffffff</color>
-    <color name="light_gray">#eeeeee</color>
-    <color name="gray">#757575</color>
-    <color name="black">#212121</color>
+    <color name="white">#FFFFFF</color>
+    <color name="light_gray">#EEEEEE</color>
+    <color name="gray">#64748B</color>
+    <color name="black">#0A0E17</color>
 
-    <color name="deviceItemColor">#ffffff</color>
+    <color name="deviceItemColor">#1A2234</color>
+
+    <!-- Cockpit Tactical HUD Tokens -->
+    <color name="cockpit_bg">#0A0E17</color>
+    <color name="cockpit_surface">#121826</color>
+    <color name="cockpit_surface_elevated">#1A2234</color>
+    <color name="cockpit_border">#26354D</color>
+    <color name="cockpit_cyan">#00E5FF</color>
+    <color name="cockpit_amber">#FF9100</color>
+    <color name="cockpit_red">#FF1744</color>
+    <color name="cockpit_green">#00E676</color>
+    <color name="cockpit_text_primary">#F1F5F9</color>
+    <color name="cockpit_text_secondary">#94A3B8</color>
 </resources>
