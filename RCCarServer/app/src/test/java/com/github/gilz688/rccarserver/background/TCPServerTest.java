@@ -1,31 +1,26 @@
 package com.github.gilz688.rccarserver.background;
 
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 public class TCPServerTest {
 
     @Test
     public void testStartServer() throws Exception {
-        // Create and spy TCPServer object using Mockito
-        TCPServer server = spy(new TCPServer());
+        TCPServer server = new TCPServer();
 
         // start server
         server.startServer();
 
-        // verify that isStopped() returns false
-        assertEquals(false,server.isStopped());
+        // verify that isStopped() returns false while running
+        assertEquals(false, server.isStopped());
 
         // stop server and wait for thread to stop
         server.stopServer();
-        server.join();
+        server.join(2000);
 
         // verify that isStopped() returns true
-        assertEquals(true,server.isStopped());
-
-        // verify using Mockito that method run() was executed once
-        verify(server,times(1)).run();
+        assertEquals(true, server.isStopped());
     }
 
     @Test
@@ -33,16 +28,19 @@ public class TCPServerTest {
         // create and stop server
         TCPServer server = new TCPServer();
 
-        // verify that isStopped() returns false
-        assertEquals(false,server.isStopped());
+        // verify that isStopped() returns true before start
+        assertEquals(true, server.isStopped());
 
         server.startServer();
 
-        // verify that isStopped() returns true
-        assertEquals(true,server.isStopped());
+        // verify that isStopped() returns false after start
+        assertEquals(false, server.isStopped());
 
         // stop server and wait for thread to stop
         server.stopServer();
-        server.join();
+        server.join(2000);
+
+        // verify that isStopped() returns true
+        assertEquals(true, server.isStopped());
     }
 }

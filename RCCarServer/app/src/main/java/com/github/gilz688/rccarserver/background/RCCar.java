@@ -37,11 +37,8 @@ public class RCCar{
     }
 
     public void send(String command) throws IOException {
-        Log.d("RCCar",command);
-        int res = mPort.write(command.concat("\r").getBytes(), command.length() + 1);
-        if( res < 0 ) {
-            throw new SerialSendingException();
-        }
+        Log.d("RCCar", command);
+        mPort.write(command.concat("\r").getBytes(), 1000);
     }
 
     private class PermissionException extends IOException {

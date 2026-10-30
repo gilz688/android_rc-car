@@ -21,6 +21,10 @@ public class TCPServer extends Thread {
     private final int serverPort;
     private volatile boolean isRunning = false;
 
+    public TCPServer() {
+        this(50000);
+    }
+
     public TCPServer(int port) {
         serverPort = port;
     }
@@ -66,15 +70,21 @@ public class TCPServer extends Thread {
     }
 
     public synchronized boolean isStopped() {
-        return this.isRunning;
+        return !this.isRunning;
     }
 
     public synchronized void stopServer(){
         isRunning = false;
-        executor.shutdown();
+        if (executor != null) {
+            executor.shutdown();
+        }
         try {
-            executor.shutdownNow();
-            serverSocket.close();
+            if (executor != null) {
+                executor.shutdownNow();
+            }
+            if (serverSocket != null) {
+                serverSocket.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,0 +1,11 @@
+{
+  "project_name": "android_rc-car",
+  "project_dir": "/root/Workspace/android_rc-car",
+  "project_type": "android_or_gradle",
+  "default_branch": "master",
+  "staging_branch": "staging",
+  "build_cmd": "./gradlew assembleDebug -p RCCarClient",
+  "test_cmd": "./gradlew test -p RCCarClient",
+  "spec_driven": true,
+  "speckit_dir": "auto"
+}

@@ -1,13 +1,15 @@
-apply plugin: 'com.android.application'
+plugins {
+    alias(libs.plugins.android.application)
+}
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    namespace 'com.github.gilz688.rccarserver'
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.github.gilz688.rccarserver"
-        minSdkVersion 21
-        targetSdkVersion 30
+        minSdk 21
+        targetSdk 34
         versionCode 1
         versionName "1.1"
 
@@ -15,31 +17,49 @@ android {
 
         buildFeatures {
             viewBinding true
+            buildConfig true
         }
     }
 
     buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
+    constraints {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22") {
+            because("kotlin-stdlib-jdk7 is now part of kotlin-stdlib")
+        }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22") {
+            because("kotlin-stdlib-jdk8 is now part of kotlin-stdlib")
+        }
+    }
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.appcompat
+    implementation libs.gson
+    implementation libs.usb.serial.for.android
 
-    testImplementation 'junit:junit:4.13.1'
-    testImplementation "org.mockito:mockito-core:3.1.0"
-    testImplementation 'org.powermock:powermock-api-mockito:1.6.1'
-    testImplementation 'org.powermock:powermock-module-junit4:1.6.1'
-    testImplementation "org.robolectric:robolectric:4.2.1"
+    testImplementation libs.junit
+    testImplementation libs.mockito.core
 
-    implementation 'com.github.mik3y:usb-serial-for-android:3.3.0'
-
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.espresso.core
 }

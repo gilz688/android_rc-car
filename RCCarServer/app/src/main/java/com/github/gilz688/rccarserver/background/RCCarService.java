@@ -110,7 +110,11 @@ public class RCCarService extends Service {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .build();
 
-        startForeground(NOTIFICATION_ID, notification);
+        if (Build.VERSION.SDK_INT >= 34) {
+            startForeground(NOTIFICATION_ID, notification, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE);
+        } else {
+            startForeground(NOTIFICATION_ID, notification);
+        }
     }
 
     public void hideNotification(){

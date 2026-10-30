@@ -10,15 +10,25 @@ import android.os.Build;
 import android.widget.Toast;
 
 public class USBBroadcastReceiver extends BroadcastReceiver {
+    @Override
     public void onReceive(Context context, Intent intent){
         String action = intent.getAction();
         Intent serviceIntent = new Intent(context.getApplicationContext(), RCCarService.class);
+        if (action == null) {
+            return;
+        }
         switch(action){
             case UsbManager.ACTION_USB_DEVICE_ATTACHED:
                 UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, new  Intent(RCCarService.ACTION_USB_PERMISSION), 0);
+                int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    flags |= PendingIntent.FLAG_MUTABLE;
+                }
+                PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(RCCarService.ACTION_USB_PERMISSION), flags);
                 UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-                usbManager.requestPermission(device, permissionIntent);
+                if (usbManager != null && device != null) {
+                    usbManager.requestPermission(device, permissionIntent);
+                }
                 break;
             case UsbManager.ACTION_USB_DEVICE_DETACHED:
                 context.stopService(serviceIntent);
@@ -30,7 +40,9 @@ public class USBBroadcastReceiver extends BroadcastReceiver {
                 } else {
                     context.startService(serviceIntent);
                 }
+                break;
             default:
+                break;
         }
     }
 }

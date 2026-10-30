@@ -1,15 +1,16 @@
 package com.github.gilz688.rccarserver.background;
 
-import org.apache.tools.ant.filters.StringInputStream;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import javax.net.SocketFactory;
 import com.github.gilz688.rccarserver.MockingUtils;
-import static  org.mockito.Mockito.*;
+import static org.mockito.Mockito.*;
 
 public class TCPServerTaskTest {
 
@@ -20,11 +21,12 @@ public class TCPServerTaskTest {
         String expected1 = "Hello,";
         String expected2 = "world!";
         String testInput = expected1 + '\n' + expected2 + '\n';
-        InputStream inputStream = new StringInputStream(testInput);
+        InputStream inputStream = new ByteArrayInputStream(testInput.getBytes(StandardCharsets.UTF_8));
 
         // create mock socket using Mockito
         SocketFactory socketFactory = MockingUtils.mockSocketFactory(mockOutputStream,inputStream);
         Socket mockSocket = socketFactory.createSocket();
+        when(mockSocket.getInetAddress()).thenReturn(mock(InetAddress.class));
 
         // create mock listener and set it as the current TCPServerListener
         TCPServer.TCPServerListener mockListener = mock(TCPServer.TCPServerListener.class);
@@ -41,11 +43,12 @@ public class TCPServerTaskTest {
     public void testRunNothingSent() throws Exception {
         // create mock output and dummy input streams
         OutputStream mockOutputStream = mock(OutputStream.class);
-        InputStream inputStream = new StringInputStream("");
+        InputStream inputStream = new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8));
 
         // create mock socket using Mockito
         SocketFactory socketFactory = MockingUtils.mockSocketFactory(mockOutputStream,inputStream);
         Socket mockSocket = socketFactory.createSocket();
+        when(mockSocket.getInetAddress()).thenReturn(mock(InetAddress.class));
         when(mockSocket.getInetAddress()).thenReturn(mock(InetAddress.class));
 
         // create mock listener and set it as the current TCPServerListener
