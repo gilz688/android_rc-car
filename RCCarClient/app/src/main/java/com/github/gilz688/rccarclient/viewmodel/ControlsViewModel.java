@@ -69,11 +69,19 @@ public class ControlsViewModel extends ViewModel implements DeviceDialogFragment
 
     public void setHandSwap(boolean handSwap) {
         ControlsConfig cur = controlsConfig.getValue();
-        if (cur != null && cur.isHandSwap() != handSwap) {
-            cur.setHandSwap(handSwap);
-            controlsConfig.setValue(cur);
+        if (cur == null) {
+            cur = new ControlsConfig();
+        }
+        if (cur.isHandSwap() != handSwap) {
+            ControlsConfig updated = new ControlsConfig(
+                    handSwap,
+                    cur.getControlMode(),
+                    cur.isInvertThrottle(),
+                    cur.isInvertSteering()
+            );
+            controlsConfig.setValue(updated);
             if (controlsPreferences != null) {
-                controlsPreferences.saveConfig(cur);
+                controlsPreferences.saveConfig(updated);
             }
             vibrate();
         }
@@ -81,11 +89,19 @@ public class ControlsViewModel extends ViewModel implements DeviceDialogFragment
 
     public void setControlMode(ControlsConfig.ControlMode mode) {
         ControlsConfig cur = controlsConfig.getValue();
-        if (cur != null && cur.getControlMode() != mode) {
-            cur.setControlMode(mode);
-            controlsConfig.setValue(cur);
+        if (cur == null) {
+            cur = new ControlsConfig();
+        }
+        if (cur.getControlMode() != mode) {
+            ControlsConfig updated = new ControlsConfig(
+                    cur.isHandSwap(),
+                    mode,
+                    cur.isInvertThrottle(),
+                    cur.isInvertSteering()
+            );
+            controlsConfig.setValue(updated);
             if (controlsPreferences != null) {
-                controlsPreferences.saveConfig(cur);
+                controlsPreferences.saveConfig(updated);
             }
             if (mode == ControlsConfig.ControlMode.ACCELEROMETER) {
                 enableAccelerometer();
@@ -98,11 +114,19 @@ public class ControlsViewModel extends ViewModel implements DeviceDialogFragment
 
     public void setInvertThrottle(boolean invert) {
         ControlsConfig cur = controlsConfig.getValue();
-        if (cur != null && cur.isInvertThrottle() != invert) {
-            cur.setInvertThrottle(invert);
-            controlsConfig.setValue(cur);
+        if (cur == null) {
+            cur = new ControlsConfig();
+        }
+        if (cur.isInvertThrottle() != invert) {
+            ControlsConfig updated = new ControlsConfig(
+                    cur.isHandSwap(),
+                    cur.getControlMode(),
+                    invert,
+                    cur.isInvertSteering()
+            );
+            controlsConfig.setValue(updated);
             if (controlsPreferences != null) {
-                controlsPreferences.saveConfig(cur);
+                controlsPreferences.saveConfig(updated);
             }
             vibrate();
         }
@@ -110,11 +134,19 @@ public class ControlsViewModel extends ViewModel implements DeviceDialogFragment
 
     public void setInvertSteering(boolean invert) {
         ControlsConfig cur = controlsConfig.getValue();
-        if (cur != null && cur.isInvertSteering() != invert) {
-            cur.setInvertSteering(invert);
-            controlsConfig.setValue(cur);
+        if (cur == null) {
+            cur = new ControlsConfig();
+        }
+        if (cur.isInvertSteering() != invert) {
+            ControlsConfig updated = new ControlsConfig(
+                    cur.isHandSwap(),
+                    cur.getControlMode(),
+                    cur.isInvertThrottle(),
+                    invert
+            );
+            controlsConfig.setValue(updated);
             if (controlsPreferences != null) {
-                controlsPreferences.saveConfig(cur);
+                controlsPreferences.saveConfig(updated);
             }
             vibrate();
         }

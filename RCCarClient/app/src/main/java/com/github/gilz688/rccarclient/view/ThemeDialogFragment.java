@@ -60,6 +60,9 @@ public class ThemeDialogFragment extends DialogFragment {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
                     break;
             }
+            if (getActivity() != null) {
+                getActivity().recreate();
+            }
         });
 
         return builder.create();

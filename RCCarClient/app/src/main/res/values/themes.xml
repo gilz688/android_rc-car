@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme: Modern Material 3 Dark Cockpit -->
+    <!-- Base application theme: Modern Material 3 Cockpit -->
     <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
 
@@ -20,6 +20,7 @@
 
         <item name="android:statusBarColor" tools:targetApi="l">@color/cockpit_bg</item>
         <item name="android:navigationBarColor" tools:targetApi="o_mr1">@color/cockpit_bg</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
     </style>
 
     <style name="MyRounded.MaterialComponents.MaterialAlertDialog" parent="@style/ThemeOverlay.Material3.MaterialAlertDialog">

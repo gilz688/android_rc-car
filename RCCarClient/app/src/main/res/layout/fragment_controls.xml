@@ -155,14 +155,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:background="@drawable/joystick_track_crosshair">
+                android:layout_marginTop="20dp">
 
                 <com.jmedeisis.bugstick.Joystick
                     android:id="@+id/left_joystick"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    app:force_square="true">
+                    android:background="@drawable/joystick_track_vertical"
+                    app:force_square="false"
+                    app:motion_constraint="Vertical">
 
                     <Button
                         android:layout_width="80dp"
@@ -218,14 +220,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:background="@drawable/joystick_track_crosshair">
+                android:layout_marginTop="20dp">
 
                 <com.jmedeisis.bugstick.Joystick
                     android:id="@+id/right_joystick"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    app:force_square="true">
+                    android:background="@drawable/joystick_track_horizontal"
+                    app:force_square="false"
+                    app:motion_constraint="Horizontal">
 
                     <Button
                         android:layout_width="80dp"

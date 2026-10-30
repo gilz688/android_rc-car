@@ -35,7 +35,7 @@ public class ControlSettingsDialogFragment extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewModel = new ViewModelProvider(requireParentFragment()).get(ControlsViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(ControlsViewModel.class);
 
         ControlsConfig config = viewModel.getControlsConfig().getValue();
         if (config == null) {

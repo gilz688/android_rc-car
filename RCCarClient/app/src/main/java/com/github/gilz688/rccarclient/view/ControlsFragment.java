@@ -26,6 +26,7 @@ import com.github.gilz688.rccarclient.inject.RCCarComponent;
 import com.github.gilz688.rccarclient.model.ControlsConfig;
 import com.github.gilz688.rccarclient.model.Device;
 import com.github.gilz688.rccarclient.viewmodel.ControlsViewModel;
+import com.jmedeisis.bugstick.Joystick;
 import com.jmedeisis.bugstick.JoystickListener;
 
 public class ControlsFragment extends Fragment {
@@ -41,8 +42,8 @@ public class ControlsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Inject the View Model
-        viewModel = new ViewModelProvider(this).get(ControlsViewModel.class);
+        // Inject the View Model (scoped to Activity so dialogs share the exact same instance)
+        viewModel = new ViewModelProvider(requireActivity()).get(ControlsViewModel.class);
 
         // Configure the sensor manager and pass to the View Model
         RCCarComponent component = ((RCCarClientApplication) requireActivity().getApplication()).getComponent();
@@ -91,7 +92,7 @@ public class ControlsFragment extends Fragment {
             return false;
         });
 
-        // Left Joystick Listener
+        // Left Joystick: default Throttle (locked to vertical axis), swappable to Steering (horizontal axis)
         binding.leftJoystick.setJoystickListener(new JoystickListener() {
             @Override
             public void onDown() {
@@ -102,16 +103,16 @@ public class ControlsFragment extends Fragment {
             public void onDrag(float degrees, float offset) {
                 ControlsConfig cfg = viewModel.getControlsConfig().getValue();
                 boolean swapped = (cfg != null && cfg.isHandSwap());
-                double rad = Math.toRadians(degrees);
-                float x = (float) (offset * Math.cos(rad));
-                float y = (float) (offset * Math.sin(rad));
-
                 if (swapped) {
-                    // Left controls Steering
-                    viewModel.onSteeringInput(Math.round(x * ControlsViewModel.MAXIMUM_ANGLE));
+                    // Left controls Steering (Horizontal axis)
+                    // 0° = right (+), 180° = left (-)
+                    float normalized = (float) (offset * Math.cos(Math.toRadians(degrees)));
+                    viewModel.onSteeringInput(Math.round(normalized * ControlsViewModel.MAXIMUM_ANGLE));
                 } else {
-                    // Left controls Throttle
-                    viewModel.onThrottleInput(Math.round(y * ControlsViewModel.MAXIMUM_SPEED));
+                    // Left controls Throttle (Vertical axis)
+                    // +90° = up (+ forward), -90° = down (- reverse)
+                    float normalized = (float) (offset * Math.sin(Math.toRadians(degrees)));
+                    viewModel.onThrottleInput(Math.round(normalized * ControlsViewModel.MAXIMUM_SPEED));
                 }
             }
 
@@ -127,7 +128,7 @@ public class ControlsFragment extends Fragment {
             }
         });
 
-        // Right Joystick Listener
+        // Right Joystick: default Steering (locked to horizontal axis), swappable to Throttle (vertical axis)
         binding.rightJoystick.setJoystickListener(new JoystickListener() {
             @Override
             public void onDown() {
@@ -138,16 +139,16 @@ public class ControlsFragment extends Fragment {
             public void onDrag(float degrees, float offset) {
                 ControlsConfig cfg = viewModel.getControlsConfig().getValue();
                 boolean swapped = (cfg != null && cfg.isHandSwap());
-                double rad = Math.toRadians(degrees);
-                float x = (float) (offset * Math.cos(rad));
-                float y = (float) (offset * Math.sin(rad));
-
                 if (swapped) {
-                    // Right controls Throttle
-                    viewModel.onThrottleInput(Math.round(y * ControlsViewModel.MAXIMUM_SPEED));
+                    // Right controls Throttle (Vertical axis)
+                    // +90° = up (+ forward), -90° = down (- reverse)
+                    float normalized = (float) (offset * Math.sin(Math.toRadians(degrees)));
+                    viewModel.onThrottleInput(Math.round(normalized * ControlsViewModel.MAXIMUM_SPEED));
                 } else {
-                    // Right controls Steering
-                    viewModel.onSteeringInput(Math.round(x * ControlsViewModel.MAXIMUM_ANGLE));
+                    // Right controls Steering (Horizontal axis)
+                    // 0° = right (+), 180° = left (-)
+                    float normalized = (float) (offset * Math.cos(Math.toRadians(degrees)));
+                    viewModel.onSteeringInput(Math.round(normalized * ControlsViewModel.MAXIMUM_ANGLE));
                 }
             }
 
@@ -203,7 +204,7 @@ public class ControlsFragment extends Fragment {
                 switch (action) {
                     case SHOW_CONTROL_SETTINGS_DIALOG:
                         ControlSettingsDialogFragment.newInstance().show(
-                                getChildFragmentManager(), ControlSettingsDialogFragment.TAG);
+                                requireActivity().getSupportFragmentManager(), ControlSettingsDialogFragment.TAG);
                         break;
                     case SHOW_THEME_DIALOG:
                         ThemeDialogFragment themeDialog = new ThemeDialogFragment();
@@ -231,24 +232,45 @@ public class ControlsFragment extends Fragment {
     private void updateControlsUi(@NonNull ControlsConfig config) {
         boolean swapped = config.isHandSwap();
         if (swapped) {
+            // Left is Steering (Horizontal axis locked)
+            binding.leftJoystick.setMotionConstraint(Joystick.MotionConstraint.HORIZONTAL);
+            binding.leftJoystick.setBackgroundResource(R.drawable.joystick_track_horizontal);
             binding.textLeftZoneLabel.setText(R.string.controls_steering_label);
             binding.textLeftZoneLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.cockpit_cyan));
+
+            // Right is Throttle (Vertical axis locked)
+            binding.rightJoystick.setMotionConstraint(Joystick.MotionConstraint.VERTICAL);
+            binding.rightJoystick.setBackgroundResource(R.drawable.joystick_track_vertical);
             binding.textRightZoneLabel.setText(R.string.controls_throttle_label);
             binding.textRightZoneLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.cockpit_amber));
-            binding.textControlModeBadge.setText("L: STEER | R: THROTTLE");
+
+            binding.textControlModeBadge.setText("L: STEER (↔) | R: THROTTLE (↕)");
             binding.buttonQuickSwap.setText("SWAPPED");
             binding.buttonQuickSwap.setIconTint(ColorStateList.valueOf(
                     ContextCompat.getColor(requireContext(), R.color.cockpit_cyan)));
         } else {
+            // Left is Throttle (Vertical axis locked)
+            binding.leftJoystick.setMotionConstraint(Joystick.MotionConstraint.VERTICAL);
+            binding.leftJoystick.setBackgroundResource(R.drawable.joystick_track_vertical);
             binding.textLeftZoneLabel.setText(R.string.controls_throttle_label);
             binding.textLeftZoneLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.cockpit_amber));
+
+            // Right is Steering (Horizontal axis locked)
+            binding.rightJoystick.setMotionConstraint(Joystick.MotionConstraint.HORIZONTAL);
+            binding.rightJoystick.setBackgroundResource(R.drawable.joystick_track_horizontal);
             binding.textRightZoneLabel.setText(R.string.controls_steering_label);
             binding.textRightZoneLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.cockpit_cyan));
-            binding.textControlModeBadge.setText("L: THROTTLE | R: STEER");
+
+            binding.textControlModeBadge.setText("L: THROTTLE (↕) | R: STEER (↔)");
             binding.buttonQuickSwap.setText("SWAP");
             binding.buttonQuickSwap.setIconTint(ColorStateList.valueOf(
                     ContextCompat.getColor(requireContext(), R.color.cockpit_amber)));
         }
+
+        binding.leftJoystick.requestLayout();
+        binding.leftJoystick.invalidate();
+        binding.rightJoystick.requestLayout();
+        binding.rightJoystick.invalidate();
 
         if (config.getControlMode() == ControlsConfig.ControlMode.ACCELEROMETER) {
             binding.toggleAccelerometer.setBackgroundTintList(ColorStateList.valueOf(
